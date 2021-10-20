@@ -415,6 +415,48 @@ class User extends CI_Controller{
         redirect('jurnal_penyesuaian');
     }
 
+    public function laporanKeuangan(){
+        $titleTag = 'Laporan Keuangan';
+        $content = 'user/laporan_keuangan';
+        $this->load->view('template',compact('content','titleTag'));
+    }
+
+    public function laporanKeuanganLabaRugi() {
+        $titleTag = 'Laporan Keuangan Laba Rugi';
+        $content = 'user/laporan_keuangan_laba_rugi_main';
+        $listJurnal = $this->jurnal->getJurnalByYearAndMonth();
+        $tahun = $this->jurnal->getJurnalByYear();
+        $this->load->view('template',compact('content','listJurnal','titleTag','tahun'));
+    }
+
+    public function laporanKeuanganLabaRugiDetail(){
+        $content = 'user/laporan_keuangan_laba_rugi';
+        $titleTag = 'Laporan Keuangan Laba Rugi';
+        $bulan = $this->input->post('bulan',true);
+        $tahun = $this->input->post('tahun',true);
+        $jurnalsP = null;
+        $jurnalsB = null;
+
+        if(empty($bulan) || empty($tahun)){
+            redirect('laporan_keuangan/labaRugi');
+        }
+
+        $jurnalsP = $this->jurnal->getJurnalJoinAkunDetailFilterP($bulan,$tahun);
+        $jurnalsB = $this->jurnal->getJurnalJoinAkunDetailFilterB($bulan,$tahun);
+        $totalDebitP = $this->jurnal->getTotalSaldoDetailFilterP('debit',$bulan,$tahun);
+        $totalKreditP = $this->jurnal->getTotalSaldoDetailFilterP('kredit',$bulan,$tahun);
+        $totalDebitB = $this->jurnal->getTotalSaldoDetailFilterB('debit',$bulan,$tahun);
+        $totalKreditB = $this->jurnal->getTotalSaldoDetailFilterB('kredit',$bulan,$tahun);
+        $labaRugi = $totalKreditP - $totalDebitB;
+
+        if($jurnalsP==null || $jurnalsB==null){
+            $this->session->set_flashdata('dataNull','Data Laporan Keuangan Dengan Bulan '.bulan($bulan).' Pada Tahun '.date('Y',strtotime($tahun)).' Tidak Di Temukan');
+            redirect('laporan_keuangan/labaRugi');
+        }
+
+        $this->load->view('template',compact('content','jurnalsP','jurnalsB','totalDebitP','totalDebitB','totalKreditP','totalKreditB','titleTag', 'labaRugi'));
+    }
+
     public function laporan(){
         $titleTag = 'Laporan';
         $content = 'user/laporan_main';

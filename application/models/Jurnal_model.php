@@ -110,15 +110,43 @@ class Jurnal_model extends CI_Model{
 
     public function getJurnalJoinAkunDetail($bulan,$tahun){
         return $this->db->select('transaksi.id_transaksi,transaksi.tgl_transaksi,akun.nama_reff,transaksi.no_reff,transaksi.jenis_saldo,transaksi.saldo,transaksi.tgl_input')
-                        ->from($this->table)
-                        ->where('month(transaksi.tgl_transaksi)',$bulan)
-                        ->where('year(transaksi.tgl_transaksi)',$tahun)
-                        ->join('akun','transaksi.no_reff = akun.no_reff')
-                        ->order_by('tgl_transaksi','ASC')
-                        ->order_by('tgl_input','ASC')
-                        ->order_by('jenis_saldo','ASC')
-                        ->get()
-                        ->result();
+        ->from($this->table)
+        ->where('month(transaksi.tgl_transaksi)',$bulan)
+        ->where('year(transaksi.tgl_transaksi)',$tahun)
+        ->join('akun','transaksi.no_reff = akun.no_reff')
+        ->order_by('tgl_transaksi','ASC')
+        ->order_by('tgl_input','ASC')
+        ->order_by('jenis_saldo','ASC')
+        ->get()
+        ->result();
+    }
+    
+    public function getJurnalJoinAkunDetailFilterP($bulan,$tahun){
+        return $this->db->select('transaksi.id_transaksi,transaksi.tgl_transaksi,akun.nama_reff,transaksi.no_reff,transaksi.jenis_saldo,transaksi.saldo,transaksi.tgl_input')
+        ->from($this->table)
+        ->where('month(transaksi.tgl_transaksi)',$bulan)
+        ->where('year(transaksi.tgl_transaksi)',$tahun)
+        ->like('transaksi.no_reff', '4')
+        ->join('akun','transaksi.no_reff = akun.no_reff')
+        ->order_by('tgl_transaksi','ASC')
+        ->order_by('tgl_input','ASC')
+        ->order_by('jenis_saldo','ASC')
+        ->get()
+        ->result();
+    }
+    
+    public function getJurnalJoinAkunDetailFilterB($bulan,$tahun){
+        return $this->db->select('transaksi.id_transaksi,transaksi.tgl_transaksi,akun.nama_reff,transaksi.no_reff,transaksi.jenis_saldo,transaksi.saldo,transaksi.tgl_input')
+        ->from($this->table)
+        ->where('month(transaksi.tgl_transaksi)',$bulan)
+        ->where('year(transaksi.tgl_transaksi)',$tahun)
+        ->like('transaksi.no_reff','5')
+        ->join('akun','transaksi.no_reff = akun.no_reff')
+        ->order_by('tgl_transaksi','ASC')
+        ->order_by('tgl_input','ASC')
+        ->order_by('jenis_saldo','ASC')
+        ->get()
+        ->result();
     }
 
     public function getTotalSaldoDetail($jenis_saldo,$bulan,$tahun){
@@ -127,6 +155,28 @@ class Jurnal_model extends CI_Model{
                         ->where('month(transaksi.tgl_transaksi)',$bulan)
                         ->where('year(transaksi.tgl_transaksi)',$tahun)
                         ->where('jenis_saldo',$jenis_saldo)
+                        ->get()
+                        ->row();
+                    }
+                    
+                    public function getTotalSaldoDetailFilterP($jenis_saldo,$bulan,$tahun){
+                        return $this->db->select_sum('saldo')
+                        ->from($this->table)
+                        ->where('month(transaksi.tgl_transaksi)',$bulan)
+                        ->where('year(transaksi.tgl_transaksi)',$tahun)
+                        ->where('jenis_saldo',$jenis_saldo)
+                        ->like('transaksi.no_reff', '4')
+                        ->get()
+                        ->row();
+    }
+
+    public function getTotalSaldoDetailFilterB($jenis_saldo,$bulan,$tahun){
+        return $this->db->select_sum('saldo')
+                        ->from($this->table)
+                        ->where('month(transaksi.tgl_transaksi)',$bulan)
+                        ->where('year(transaksi.tgl_transaksi)',$tahun)
+                        ->where('jenis_saldo',$jenis_saldo)
+                        ->like('transaksi.no_reff', '5')
                         ->get()
                         ->row();
     }

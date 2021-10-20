@@ -4,7 +4,7 @@
     <nav class="navbar navbar-top navbar-expand-md navbar-dark" id="navbar-main">
       <div class="container-fluid">
         <!-- Brand -->
-        <a class="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block" href="<?= base_url('data_akun') ?>">Data Akun</a>
+        <a class="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block" href="<?= base_url('laporan_keuangan') ?>">&laquo Laporan Keuangan</a>
         <!-- Form -->
         <form class="navbar-search navbar-search-dark form-inline mr-3 d-none d-md-flex ml-lg-auto">
           <div class="form-group mb-0">
@@ -54,10 +54,35 @@
             <div class="card-header border-0">
               <div class="row align-items-center">
                 <div class="col">
-                  <h3 class="mb-0">Data Akun</h3>
+                  <h3 class="mb-0">Laporan Keuangan Laba Rugi</h3>
                 </div>
-                <div class="col-12 my-3">
-                  <a href="<?= base_url('data_akun/tambah') ?>" class="btn btn-primary mt-2">Tambah Akun</a>
+              </div>
+              <div class="row">
+                <div class="col my-3">
+                  <form action="<?= base_url('jurnal_penyesuaian/detail') ?>" method="post" class="d-flex flex-row justify-content-end">
+                      <div class="form-group">
+                        <select name="bulan" id="bulan" class="form-control">
+                          <?php
+                            for($i=1;$i<=12;$i++){
+                              echo "<option value=$i>".bulan($i)."</option>";
+                            }
+                          ?>
+                        </select>
+                      </div>
+                      <div class="form-group mx-3">
+                        <select name="tahun" id="tahun" class="form-control">
+                          <?php 
+                            foreach($tahun as $row){
+                              $tahuns = date('Y',strtotime($row->tgl_transaksi));
+                              echo "<option value=$tahuns>".$tahuns."</option>";
+                            }
+                          ?>
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <button class="btn btn-success" type="submit">Cari</button>
+                      </div>
+                  </form>
                 </div>
               </div>
             </div>
@@ -67,38 +92,30 @@
                 <thead class="thead-light">
                   <tr>
                     <th scope="col">No.</th>
-                    <th scope="col">No.Reff</th>
-                    <th scope="col">Nama Reff</th>
-                    <th scope="col">Keterangan Reff</th>
-                    <th scope="col" class="text-center">Action</th>
+                    <th scope="col">Bulan Dan Tahun</th>
+                    <th scope="col">Action</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <?php 
-                    $no = 1;
-                    foreach($dataAkun as $row): 
+                <?php
+                    $i=0;
+                    foreach($listJurnal as $row):
+                    $i++;
+                    $bulan = date('m',strtotime($row->tgl_transaksi));
+                    $tahun = date('Y',strtotime($row->tgl_transaksi));
                   ?>
                   <tr>
-                    <td>
-                      <?= $no++ ?>
-                    </td>
-                    <td>
-                      <?= $row->no_reff ?>
-                    </td>
-                    <td>
-                    <?= $row->nama_reff ?>
-                    </td>
-                    <td>
-                    <?= $row->keterangan ?>
-                    </td>
-                    <td class="d-flex justify-content-center">
-                        <a href="<?= base_url('data_akun/edit/'.$row->no_reff) ?>" class="btn btn-warning mb-4">Edit</a>
-                        <?= form_open('data_akun/hapus',['class'=>'form'],['id'=>$row->no_reff]) ?>
-                        <?= form_button(['type'=>'submit','content'=>'Hapus','class'=>'btn btn-danger hapus']) ?>
+                    <td scope="col"><?=$i?></td>
+                    <td scope="col"><?= bulan($bulan).' '.$tahun ?></td>
+                    <td scope="col">
+                        <?= form_open('laporan_keuangan/labaRugi/detail','',['bulan'=>$bulan,'tahun'=>$tahun]) ?>
+                        <?= form_button(['type'=>'submit','content'=>'Lihat Laporan','class'=>'btn btn-success mr-3']) ?>
                         <?= form_close() ?>
                     </td>
-                  </tr> 
-                  <?php endforeach; ?>                 
+                  </tr>
+                  <?php
+                    endforeach;
+                  ?>
                 </tbody>
               </table>
             </div>

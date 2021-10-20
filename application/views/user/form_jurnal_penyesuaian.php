@@ -4,7 +4,7 @@
     <nav class="navbar navbar-top navbar-expand-md navbar-dark" id="navbar-main">
       <div class="container-fluid">
         <!-- Brand -->
-        <a class="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block" href="./index.html">Jurnal Penyesuaian</a>
+        <a class="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block" href="<?= base_url('jurnal_penyesuaian') ?>">&laquo Jurnal Penyesuaian</a>
         <!-- User -->
         <ul class="navbar-nav align-items-center d-none d-md-flex">
           <li class="nav-item dropdown">
@@ -75,8 +75,8 @@
                         <?= form_error('no_reff') ?>
                     </div>
                     <div class="col">
-                        <label for="reff">No. Reff</label>
-                        <input type="text" name="reff" class="form-control" id="reff" readonly>
+                      <label for="reff">No. Reff</label>
+                      <input type="text" name="reff" class="form-control" id="reff" readonly>
                     </div>
                     <div class="col">
                         <label for="jenis_saldo">Jenis Saldo</label>

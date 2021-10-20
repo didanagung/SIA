@@ -122,12 +122,62 @@ class JurnalPenyesuaian_model extends CI_Model{
                         ->result();
     }
 
+    public function getJurnalJoinAkunDetailFilterP($bulan,$tahun){
+        return $this->db->select('penyesuaian.id_penyesuaian,penyesuaian.tgl_penyesuaian,akun.nama_reff,penyesuaian.no_reff,penyesuaian.jenis_saldo,penyesuaian.saldo,penyesuaian.tgl_input')
+                        ->from($this->table2)
+                        ->where('month(penyesuaian.tgl_penyesuaian)',$bulan)
+                        ->where('year(penyesuaian.tgl_penyesuaian)',$tahun)
+                        ->like('penyesuaian.no_reff','4')
+                        ->join('akun','penyesuaian.no_reff = akun.no_reff')
+                        ->order_by('tgl_penyesuaian','ASC')
+                        ->order_by('tgl_input','ASC')
+                        ->order_by('jenis_saldo','ASC')
+                        ->get()
+                        ->result();
+    }
+
+    public function getJurnalJoinAkunDetailFilterB($bulan,$tahun){
+        return $this->db->select('penyesuaian.id_penyesuaian,penyesuaian.tgl_penyesuaian,akun.nama_reff,penyesuaian.no_reff,penyesuaian.jenis_saldo,penyesuaian.saldo,penyesuaian.tgl_input')
+                        ->from($this->table2)
+                        ->where('month(penyesuaian.tgl_penyesuaian)',$bulan)
+                        ->where('year(penyesuaian.tgl_penyesuaian)',$tahun)
+                        ->like('penyesuaian.no_reff','5')
+                        ->join('akun','penyesuaian.no_reff = akun.no_reff')
+                        ->order_by('tgl_penyesuaian','ASC')
+                        ->order_by('tgl_input','ASC')
+                        ->order_by('jenis_saldo','ASC')
+                        ->get()
+                        ->result();
+    }
+
     public function getTotalSaldoDetail($jenis_saldo,$bulan,$tahun){
         return $this->db->select_sum('saldo')
                         ->from($this->table2)
                         ->where('month(penyesuaian.tgl_penyesuaian)',$bulan)
                         ->where('year(penyesuaian.tgl_penyesuaian)',$tahun)
                         ->where('jenis_saldo',$jenis_saldo)
+                        ->get()
+                        ->row();
+    }
+
+    public function getTotalSaldoDetailFilterP($jenis_saldo,$bulan,$tahun){
+        return $this->db->select_sum('saldo')
+                        ->from($this->table2)
+                        ->where('month(penyesuaian.tgl_penyesuaian)',$bulan)
+                        ->where('year(penyesuaian.tgl_penyesuaian)',$tahun)
+                        ->where('jenis_saldo',$jenis_saldo)
+                        ->like('penyesuaian.no_reff', '4')
+                        ->get()
+                        ->row();
+    }
+
+    public function getTotalSaldoDetailFilterB($jenis_saldo,$bulan,$tahun){
+        return $this->db->select_sum('saldo')
+                        ->from($this->table2)
+                        ->where('month(penyesuaian.tgl_penyesuaian)',$bulan)
+                        ->where('year(penyesuaian.tgl_penyesuaian)',$tahun)
+                        ->where('jenis_saldo',$jenis_saldo)
+                        ->like('penyesuaian.no_reff', '5')
                         ->get()
                         ->row();
     }

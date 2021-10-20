@@ -4,7 +4,7 @@
     <nav class="navbar navbar-top navbar-expand-md navbar-dark" id="navbar-main">
       <div class="container-fluid">
         <!-- Brand -->
-        <a class="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block" href="./index.html">Jurnal Umum</a>
+        <a class="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block" href="<?= base_url('jurnal_umum') ?>">&laquo Jurnal Umum</a>
         <!-- User -->
         <ul class="navbar-nav align-items-center d-none d-md-flex">
           <li class="nav-item dropdown">

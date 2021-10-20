@@ -25,7 +25,7 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <!-- Brand -->
-      <a class="navbar-brand pt-0" href="./index.html">
+      <a class="navbar-brand pt-0" href="<?= base_url('dashboard') ?>">
         <img src="<?= base_url('assets/img/brand/blue.png') ?>" class="navbar-brand-img" alt="...">
       </a>
       <!-- User -->
@@ -60,7 +60,7 @@
         <div class="navbar-collapse-header d-md-none">
           <div class="row">
             <div class="col-6 collapse-brand">
-              <a href="./index.html">
+              <a href="<?= base_url('dashboard') ?>">
                 <img src="<?= base_url('assets/img/brand/blue.png') ?>">
               </a>
             </div>
@@ -101,12 +101,12 @@
           </li>
           <li class="nav-item">
             <a class="nav-link" href="<?= base_url('jurnal_penyesuaian') ?>">
-            <i class="ni ni-collection text-red"></i> Jurnal Penyesuaian
+            <i class="ni ni-single-copy-04 text-red"></i> Jurnal Penyesuaian
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="<?= base_url('neraca_saldo') ?>">
-            <i class="ni ni-book-bookmark text-yellow"></i> Neraca Saldo Penyesuaian
+            <a class="nav-link" href="<?= base_url('laporan_keuangan') ?>">
+            <i class="ni ni-book-bookmark text-primary"></i> Laporan Keuangan
             </a>
           </li>
           <li class="nav-item">

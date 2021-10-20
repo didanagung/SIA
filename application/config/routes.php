@@ -88,6 +88,11 @@ $route['jurnal_penyesuaian/edit'] = 'user/editJurnalPenyesuaian';
 $route['jurnal_penyesuaian/edit_form'] = 'user/editFormJPenyesuaian';
 $route['jurnal_penyesuaian/hapus'] = 'user/deleteJurnalPenyesuaian';
 
+//LAPORAN KEUANGAN
+$route['laporan_keuangan'] = 'user/laporanKeuangan';
+$route['laporan_keuangan/labaRugi'] = 'user/laporanKeuanganLabaRugi';
+$route['laporan_keuangan/labaRugi/detail'] = 'user/laporanKeuanganLabaRugiDetail';
+
 // LAPORAN
 $route['laporan'] = 'user/laporan';
 $route['laporan/cetak'] = 'user/laporanCetak';
