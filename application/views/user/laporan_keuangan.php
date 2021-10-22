@@ -62,7 +62,7 @@
                   <a href="<?= base_url('laporan_keuangan/labaRugi') ?>" class="btn btn-primary mt-2">Laba / Rugi</a>
                   <a href="<?= base_url('laporan_keuangan/labaRugi') ?>" class="btn btn-primary mt-2">Perubahan Modal</a>
                   <a href="<?= base_url('laporan_keuangan/labaRugi') ?>" class="btn btn-primary mt-2">Neraca</a>
-                  <a href="<?= base_url('laporan_keuangan/labaRugi') ?>" class="btn btn-primary mt-2">Arus Kas</a>
+                  <a href="<?= base_url('laporan_keuangan/arusKas') ?>" class="btn btn-primary mt-2">Arus Kas</a>
                 </div>
               </div>
             </div>

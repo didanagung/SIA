@@ -92,6 +92,8 @@ $route['jurnal_penyesuaian/hapus'] = 'user/deleteJurnalPenyesuaian';
 $route['laporan_keuangan'] = 'user/laporanKeuangan';
 $route['laporan_keuangan/labaRugi'] = 'user/laporanKeuanganLabaRugi';
 $route['laporan_keuangan/labaRugi/detail'] = 'user/laporanKeuanganLabaRugiDetail';
+$route['laporan_keuangan/arusKas'] = 'user/laporanKeuanganArusKas';
+$route['laporan_keuangan/arusKas/detail'] = 'user/laporanKeuanganArusKasDetail';
 
 // LAPORAN
 $route['laporan'] = 'user/laporan';

@@ -4,7 +4,7 @@
     <nav class="navbar navbar-top navbar-expand-md navbar-dark" id="navbar-main">
       <div class="container-fluid">
         <!-- Brand -->
-        <a class="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block" href="<?= base_url('laporan_keuangan/labaRugi') ?>">&laquo Laporan Keuangan Laba / Rugi</a>
+        <a class="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block" href="<?= base_url('laporan_keuangan/arusKas') ?>">&laquo Laporan Keuangan Arus Kas</a>
         <!-- Form -->
         <form class="navbar-search navbar-search-dark form-inline mr-3 d-none d-md-flex ml-lg-auto">
           <div class="form-group mb-0">
@@ -54,87 +54,69 @@
             <div class="card-header border-0">
               <div class="row align-items-center">
                 <div class="col">
-                  <h3 class="mb-0">Laporan Keuangan Laba / Rugi</h3>
+                  <h3 class="mb-0">Laporan Keuangan Arus Kas</h3>
                 </div>
               </div>
             </div>
-            <div class="container">
             <div class="table-responsive">
-                <h3>Pendapatan</h3>
               <!-- Projects table -->
               <table class="table align-items-center table-flush">
                 <thead class="thead-light">
                   <tr>
-                    <th scope="col"></th>
-                    <th scope="col">Nominal</th>
+                    <th scope="col">Tanggal</th>
+                    <th scope="col">Nama Akun</th>
+                    <th scope="col">Ref</th>
+                    <th scope="col">Debet</th>
+                    <th scope="col">Kredit</th>
                   </tr>
                 </thead>
                 <tbody>
                   <?php
                     $i=1;
-                    foreach($jurnalsP as $row):
-                      if($row->jenis_saldo=='kredit'):
+                    foreach($jurnals as $row):
+                      if($row->jenis_saldo=='debit'):
                   ?>
                   <tr>
+                    <td>
+                      <?= date_indo($row->tgl_transaksi) ?>
+                    </td>
                     <td>
                     <?= $row->nama_reff ?>
                     </td>
                     <td>
-                    <?= 'Rp. '.number_format($row->saldo,0,',','.') ?>
-                    </td>     
-                  </tr>
-                  <?php 
-                    endif;
-                  ?>
-                  <?php endforeach ?>
-                  <tr>
-                    <td class="text"><b>Total Pendapatan</b></td>
-                    <td class="text-danger pr-5"><b><?= 'Rp. '.number_format($totalKreditP->saldo,0,',','.') ?></b></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div class="table-responsive mt-3">
-                <h3>Beban</h3>
-              <!-- Projects table -->
-              <table class="table align-items-center table-flush">
-                <thead class="thead-light">
-                  <tr>
-                    <th scope="col"></th>
-                    <th scope="col">Nominal</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <?php
-                    $i=1;
-                    foreach($jurnalsB as $rows):
-                      if($rows->jenis_saldo=='debit'):
-                  ?>
-                  <tr>
-                  <td>
-                    <?= $rows->nama_reff ?>
+                    <?= $row->no_reff ?>
                     </td>
                     <td>
-                    <?= 'Rp. '.number_format($rows->saldo,0,',','.') ?>
+                    <?= 'Rp. '.number_format($row->saldo,0,',','.') ?>
+                    </td>
+                    <td>
+                      Rp. 0
                     </td>    
                   </tr>
                   <?php 
                     endif;
+                    if($row->jenis_saldo=='kredit'):
                   ?>
+                  <tr>
+                    <td><?= date_indo($row->tgl_transaksi) ?></td>
+                    <td class="text-right"><?= $row->nama_reff ?></td>
+                    <td><?= $row->no_reff ?></td>
+                    <td>
+                      Rp. 0
+                    </td>
+                    <td>
+                    <?= 'Rp. '.number_format($row->saldo,0,',','.') ?>
+                    </td>
+                  </tr>  
+                  <?php endif;?>
                   <?php endforeach ?>
                   <tr>
-                    <td class="text"><b>Total Beban</b></td>
-                    <td class="text-danger"><b><?= 'Rp. '.number_format($totalDebitB->saldo,0,',','.') ?></b></td>
-                  </tr>
-
-                  <tr>
-                    <?php $labaRugi = $totalKreditP->saldo - $totalDebitB->saldo ?>
-                    <td class="text"><b><?= ($labaRugi < 0) ? "Rugi" :  "Laba"  ?></b></td>
-                    <td class="text-primary"><b><?= 'Rp. '.number_format($labaRugi,0,',','.')  ?></b></td>
+                    <td colspan="3" class="text-center"><b>Jumlah Total</b></td>
+                    <td class="text-danger"><b><?= 'Rp. '.number_format($totalDebit->saldo,0,',','.') ?></b></td>
+                    <td colspan="2" class="text-danger"><b><?= 'Rp. '.number_format($totalKredit->saldo,0,',','.') ?></b></td>
                   </tr>
                 </tbody>
               </table>
-              </div>
             </div>
           </div>
         </div>

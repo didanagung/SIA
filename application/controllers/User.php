@@ -68,7 +68,7 @@ class User extends CI_Controller{
 
     public function createAkun(){
         $title = 'Tambah';
-        $titleTag = 'Tambah Data Akun';
+        $titleTag = 'Data Akun';
         $action = 'data_akun/tambah';
         $content = 'user/form_akun';
 
@@ -91,7 +91,7 @@ class User extends CI_Controller{
 
     public function editAkun($no_reff = null){
         $title = 'Edit';
-        $titleTag = 'Edit Data Akun';
+        $titleTag = 'Data Akun';
         $action = 'data_akun/edit/'.$no_reff;
         $content = 'user/form_akun';
 
@@ -162,7 +162,7 @@ class User extends CI_Controller{
         $action = 'jurnal_umum/tambah'; 
         $tgl_input = date('Y-m-d H:i:s'); 
         $id_user = $this->session->userdata('id'); 
-        $titleTag = 'Tambah Jurnal Umum';
+        $titleTag = 'Jurnal Umum';
 
         if(!$_POST){
             $data = (object) $this->jurnal->getDefaultValues();
@@ -201,7 +201,12 @@ class User extends CI_Controller{
     }
 
     public function editJurnal(){
-        $title = 'Edit'; $content = 'user/form_jurnal'; $action = 'jurnal_umum/edit'; $tgl_input = date('Y-m-d H:i:s'); $id_user = $this->session->userdata('id'); $titleTag = 'Edit Jurnal Umum';
+        $title = 'Edit'; 
+        $content = 'user/form_jurnal'; 
+        $action = 'jurnal_umum/edit'; 
+        $tgl_input = date('Y-m-d H:i:s'); 
+        $id_user = $this->session->userdata('id'); 
+        $titleTag = 'Jurnal Umum';
 
         if($_POST){
             $data = (object) [
@@ -345,7 +350,7 @@ class User extends CI_Controller{
         $action = 'jurnal_penyesuaian/tambah'; 
         $tgl_input = date('Y-m-d H:i:s'); 
         $id_user = $this->session->userdata('id'); 
-        $titleTag = 'Tambah Jurnal Penyesuaian';
+        $titleTag = 'Jurnal Penyesuaian';
 
         if(!$_POST){
             $data = (object) $this->jurnalPenyesuaian->getDefaultValues();
@@ -373,7 +378,10 @@ class User extends CI_Controller{
     public function editFormJPenyesuaian(){
         if($_POST){
             $id = $this->input->post('id',true);
-            $title = 'Edit'; $content = 'user/form_jurnal_penyesuaian'; $action = 'jurnal_penyesuaian/edit'; $titleTag = 'Edit Jurnal Penyesuaian';
+            $title = 'Edit'; 
+            $content = 'user/form_jurnal_penyesuaian'; 
+            $action = 'jurnal_penyesuaian/edit'; 
+            $titleTag = 'Jurnal Penyesuaian';
 
             $data = (object) $this->jurnalPenyesuaian->getJurnalById($id);
 
@@ -422,7 +430,7 @@ class User extends CI_Controller{
     }
 
     public function laporanKeuanganLabaRugi() {
-        $titleTag = 'Laporan Keuangan Laba Rugi';
+        $titleTag = 'Laporan Keuangan';
         $content = 'user/laporan_keuangan_laba_rugi_main';
         $listJurnal = $this->jurnal->getJurnalByYearAndMonth();
         $tahun = $this->jurnal->getJurnalByYear();
@@ -431,7 +439,7 @@ class User extends CI_Controller{
 
     public function laporanKeuanganLabaRugiDetail(){
         $content = 'user/laporan_keuangan_laba_rugi';
-        $titleTag = 'Laporan Keuangan Laba Rugi';
+        $titleTag = 'Laporan Keuangan';
         $bulan = $this->input->post('bulan',true);
         $tahun = $this->input->post('tahun',true);
         $jurnalsP = null;
@@ -443,18 +451,48 @@ class User extends CI_Controller{
 
         $jurnalsP = $this->jurnal->getJurnalJoinAkunDetailFilterP($bulan,$tahun);
         $jurnalsB = $this->jurnal->getJurnalJoinAkunDetailFilterB($bulan,$tahun);
-        $totalDebitP = $this->jurnal->getTotalSaldoDetailFilterP('debit',$bulan,$tahun);
         $totalKreditP = $this->jurnal->getTotalSaldoDetailFilterP('kredit',$bulan,$tahun);
         $totalDebitB = $this->jurnal->getTotalSaldoDetailFilterB('debit',$bulan,$tahun);
-        $totalKreditB = $this->jurnal->getTotalSaldoDetailFilterB('kredit',$bulan,$tahun);
-        $labaRugi = $totalKreditP - $totalDebitB;
+        $labaRugi = null;
 
         if($jurnalsP==null || $jurnalsB==null){
             $this->session->set_flashdata('dataNull','Data Laporan Keuangan Dengan Bulan '.bulan($bulan).' Pada Tahun '.date('Y',strtotime($tahun)).' Tidak Di Temukan');
             redirect('laporan_keuangan/labaRugi');
         }
 
-        $this->load->view('template',compact('content','jurnalsP','jurnalsB','totalDebitP','totalDebitB','totalKreditP','totalKreditB','titleTag', 'labaRugi'));
+        $this->load->view('template',compact('content','jurnalsP','jurnalsB','totalDebitB','totalKreditP','titleTag', 'labaRugi'));
+    }
+
+    public function laporanKeuanganArusKas() {
+        $titleTag = 'Laporan Keuangan';
+        $content = 'user/laporan_keuangan_arus_kas_main';
+        $listJurnal = $this->jurnal->getJurnalByYearAndMonth();
+        $tahun = $this->jurnal->getJurnalByYear();
+        $this->load->view('template',compact('content','listJurnal','titleTag','tahun'));
+    }
+
+    public function laporanKeuanganArusKasDetail() {
+        $content = 'user/laporan_keuangan_arus_kas';
+        $titleTag = 'Laporan Keuangan';
+        $bulan = $this->input->post('bulan',true);
+        $tahun = $this->input->post('tahun',true);
+        $jurnals = null;
+
+        if(empty($bulan) || empty($tahun)){
+            redirect('laporan_keuangan/arusKas');
+        }
+
+        $jurnals = $this->jurnal->getJurnalJoinAkunDetailFilter($bulan,$tahun);
+        $totalKredit = $this->jurnal->getTotalSaldoDetailFilter('kredit',$bulan,$tahun);
+        $totalDebit = $this->jurnal->getTotalSaldoDetailFilter('debit',$bulan,$tahun);
+        // $labaRugi = null;
+
+        if($jurnals==null){
+            $this->session->set_flashdata('dataNull','Data Laporan Keuangan Dengan Bulan '.bulan($bulan).' Pada Tahun '.date('Y',strtotime($tahun)).' Tidak Di Temukan');
+            redirect('laporan_keuangan/arusKas');
+        }
+
+        $this->load->view('template',compact('content','jurnals','totalDebit','totalKredit','titleTag'));
     }
 
     public function laporan(){

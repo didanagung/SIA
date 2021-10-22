@@ -4,7 +4,7 @@
     <nav class="navbar navbar-top navbar-expand-md navbar-dark" id="navbar-main">
       <div class="container-fluid">
         <!-- Brand -->
-        <a class="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block" href="<?= base_url('laporan_keuangan/labaRugi') ?>">&laquo Laporan Keuangan Laba / Rugi</a>
+        <a class="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block" href="<?= base_url('laporan_keuangan') ?>">&laquo Laporan Keuangan</a>
         <!-- Form -->
         <form class="navbar-search navbar-search-dark form-inline mr-3 d-none d-md-flex ml-lg-auto">
           <div class="form-group mb-0">
@@ -54,87 +54,70 @@
             <div class="card-header border-0">
               <div class="row align-items-center">
                 <div class="col">
-                  <h3 class="mb-0">Laporan Keuangan Laba / Rugi</h3>
+                  <h3 class="mb-0">Laporan Keuangan Arus Kas</h3>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col my-3">
+                  <form action="<?= base_url('laporan_keuangan/arusKas/detail') ?>" method="post" class="d-flex flex-row justify-content-end">
+                      <div class="form-group">
+                        <select name="bulan" id="bulan" class="form-control">
+                          <?php
+                            for($i=1;$i<=12;$i++){
+                              echo "<option value=$i>".bulan($i)."</option>";
+                            }
+                          ?>
+                        </select>
+                      </div>
+                      <div class="form-group mx-3">
+                        <select name="tahun" id="tahun" class="form-control">
+                          <?php 
+                            foreach($tahun as $row){
+                              $tahuns = date('Y',strtotime($row->tgl_transaksi));
+                              echo "<option value=$tahuns>".$tahuns."</option>";
+                            }
+                          ?>
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <button class="btn btn-success" type="submit">Cari</button>
+                      </div>
+                  </form>
                 </div>
               </div>
             </div>
-            <div class="container">
             <div class="table-responsive">
-                <h3>Pendapatan</h3>
               <!-- Projects table -->
               <table class="table align-items-center table-flush">
                 <thead class="thead-light">
                   <tr>
-                    <th scope="col"></th>
-                    <th scope="col">Nominal</th>
+                    <th scope="col">No.</th>
+                    <th scope="col">Bulan Dan Tahun</th>
+                    <th scope="col">Action</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <?php
-                    $i=1;
-                    foreach($jurnalsP as $row):
-                      if($row->jenis_saldo=='kredit'):
+                <?php
+                    $i=0;
+                    foreach($listJurnal as $row):
+                    $i++;
+                    $bulan = date('m',strtotime($row->tgl_transaksi));
+                    $tahun = date('Y',strtotime($row->tgl_transaksi));
                   ?>
                   <tr>
-                    <td>
-                    <?= $row->nama_reff ?>
+                    <td scope="col"><?=$i?></td>
+                    <td scope="col"><?= bulan($bulan).' '.$tahun ?></td>
+                    <td scope="col">
+                        <?= form_open('laporan_keuangan/arusKas/detail','',['bulan'=>$bulan,'tahun'=>$tahun]) ?>
+                        <?= form_button(['type'=>'submit','content'=>'Lihat Laporan','class'=>'btn btn-success mr-3']) ?>
+                        <?= form_close() ?>
                     </td>
-                    <td>
-                    <?= 'Rp. '.number_format($row->saldo,0,',','.') ?>
-                    </td>     
                   </tr>
-                  <?php 
-                    endif;
+                  <?php
+                    endforeach;
                   ?>
-                  <?php endforeach ?>
-                  <tr>
-                    <td class="text"><b>Total Pendapatan</b></td>
-                    <td class="text-danger pr-5"><b><?= 'Rp. '.number_format($totalKreditP->saldo,0,',','.') ?></b></td>
-                  </tr>
                 </tbody>
               </table>
-            </div>
-            <div class="table-responsive mt-3">
-                <h3>Beban</h3>
-              <!-- Projects table -->
-              <table class="table align-items-center table-flush">
-                <thead class="thead-light">
-                  <tr>
-                    <th scope="col"></th>
-                    <th scope="col">Nominal</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <?php
-                    $i=1;
-                    foreach($jurnalsB as $rows):
-                      if($rows->jenis_saldo=='debit'):
-                  ?>
-                  <tr>
-                  <td>
-                    <?= $rows->nama_reff ?>
-                    </td>
-                    <td>
-                    <?= 'Rp. '.number_format($rows->saldo,0,',','.') ?>
-                    </td>    
-                  </tr>
-                  <?php 
-                    endif;
-                  ?>
-                  <?php endforeach ?>
-                  <tr>
-                    <td class="text"><b>Total Beban</b></td>
-                    <td class="text-danger"><b><?= 'Rp. '.number_format($totalDebitB->saldo,0,',','.') ?></b></td>
-                  </tr>
-
-                  <tr>
-                    <?php $labaRugi = $totalKreditP->saldo - $totalDebitB->saldo ?>
-                    <td class="text"><b><?= ($labaRugi < 0) ? "Rugi" :  "Laba"  ?></b></td>
-                    <td class="text-primary"><b><?= 'Rp. '.number_format($labaRugi,0,',','.')  ?></b></td>
-                  </tr>
-                </tbody>
-              </table>
-              </div>
             </div>
           </div>
         </div>

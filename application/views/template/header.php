@@ -74,42 +74,42 @@
         </div>
         <!-- Navigation -->
         <ul class="navbar-nav">
-          <li class="nav-item">
+          <li class="nav-item <?= ($titleTag == "Dashboard") ? "active" : "" ?>">
             <a class="nav-link" href="<?= base_url('dashboard') ?>">
               <i class="ni ni-tv-2 text-primary"></i> Dashboard
             </a>
           </li>
-          <li class="nav-item">
+          <li class="nav-item <?= ($titleTag == "Data Akun") ? "active" : "" ?>">
             <a class="nav-link" href="<?= base_url('data_akun') ?>">
             <i class="ni ni-bullet-list-67 text-red"></i> Data Akun
             </a>
           </li>
-          <li class="nav-item">
+          <li class="nav-item <?= ($titleTag == "Jurnal Umum") ? "active" : "" ?>">
             <a class="nav-link" href="<?= base_url('jurnal_umum') ?>">
             <i class="ni ni-single-copy-04 text-yellow"></i> Jurnal Umum
             </a>
           </li>
-          <li class="nav-item">
+          <li class="nav-item <?= ($titleTag == "Buku Besar") ? "active" : "" ?>">
             <a class="nav-link" href="<?= base_url('buku_besar') ?>">
             <i class="ni ni-collection text-red"></i> Buku Besar
             </a>
           </li>
-          <li class="nav-item">
+          <li class="nav-item <?= ($titleTag == "Neraca Saldo") ? "active" : "" ?>">
             <a class="nav-link" href="<?= base_url('neraca_saldo') ?>">
             <i class="ni ni-book-bookmark text-yellow"></i> Neraca Saldo
             </a>
           </li>
-          <li class="nav-item">
+          <li class="nav-item <?= ($titleTag == "Jurnal Penyesuaian") ? "active" : "" ?>">
             <a class="nav-link" href="<?= base_url('jurnal_penyesuaian') ?>">
             <i class="ni ni-single-copy-04 text-red"></i> Jurnal Penyesuaian
             </a>
           </li>
-          <li class="nav-item">
+          <li class="nav-item <?= ($titleTag == "Laporan Keuangan" || $titleTag == "Laporan Keuangan") ? "active" : "" ?>">
             <a class="nav-link" href="<?= base_url('laporan_keuangan') ?>">
             <i class="ni ni-book-bookmark text-primary"></i> Laporan Keuangan
             </a>
           </li>
-          <li class="nav-item">
+          <li class="nav-item <?= ($titleTag == "Laporan") ? "active" : "" ?>">
             <a class="nav-link" href="<?= base_url('laporan') ?>">
             <i class="fas fa-file-pdf text-red"></i>Laporan
             </a>

@@ -59,7 +59,7 @@
               </div>
               <div class="row">
                 <div class="col my-3">
-                  <form action="<?= base_url('jurnal_penyesuaian/detail') ?>" method="post" class="d-flex flex-row justify-content-end">
+                  <form action="<?= base_url('laporan_keuangan/labaRugi/detail') ?>" method="post" class="d-flex flex-row justify-content-end">
                       <div class="form-group">
                         <select name="bulan" id="bulan" class="form-control">
                           <?php
