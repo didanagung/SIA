@@ -360,9 +360,11 @@ class User extends CI_Controller{
                 'no_reff'=>$this->input->post('no_reff',true),
                 'tgl_input'=>$tgl_input,
                 'tgl_penyesuaian'=>$this->input->post('tgl_penyesuaian',true),
+                'id_transaksi'=>$this->input->post('akun',true),
                 'jenis_saldo'=>$this->input->post('jenis_saldo',true),
                 'saldo'=>$this->input->post('saldo',true)
             ];
+
         }
 
         if(!$this->jurnalPenyesuaian->validate()){
@@ -440,28 +442,62 @@ class User extends CI_Controller{
     public function laporanKeuanganLabaRugiDetail(){
         $content = 'user/laporan_keuangan_laba_rugi';
         $titleTag = 'Laporan Keuangan';
+
         $bulan = $this->input->post('bulan',true);
         $tahun = $this->input->post('tahun',true);
-        $jurnalsP = null;
-        $jurnalsB = null;
 
         if(empty($bulan) || empty($tahun)){
             redirect('laporan_keuangan/labaRugi');
         }
 
-        $jurnalsP = $this->jurnal->getJurnalJoinAkunDetailFilterP($bulan,$tahun);
-        $jurnalsB = $this->jurnal->getJurnalJoinAkunDetailFilterB($bulan,$tahun);
-        $totalKreditP = $this->jurnal->getTotalSaldoDetailFilterP('kredit',$bulan,$tahun);
-        $totalDebitB = $this->jurnal->getTotalSaldoDetailFilterB('debit',$bulan,$tahun);
-        $labaRugi = null;
+        $dataAkun = $this->akun->getAkunByMonthYearP($bulan,$tahun);
+        $data = null;
+        $saldo = null;
+        $hasil = null;
+        $totalDebit = null;
+        $totalKredit = null;
+        $s = null;
+        
+        foreach($dataAkun as $row){
+            $data[] = (array) $this->jurnal->getJurnalByNoReffMonthYearP($row->no_reff,$bulan,$tahun);
+            $saldo[] = (array) $this->jurnal->getJurnalByNoReffSaldoMonthYearP($row->no_reff,$bulan,$tahun);
+        }
 
-        if($jurnalsP==null || $jurnalsB==null){
-            $this->session->set_flashdata('dataNull','Data Laporan Keuangan Dengan Bulan '.bulan($bulan).' Pada Tahun '.date('Y',strtotime($tahun)).' Tidak Di Temukan');
+        if($data == null || $saldo == null){
+            $this->session->set_flashdata('dataNull','Laporan Keuangan Laba / Rugi Dengan Bulan '.bulan($bulan).' Pada Tahun '.date('Y',strtotime($tahun)).' Tidak Di Temukan');
             redirect('laporan_keuangan/labaRugi');
         }
 
-        $this->load->view('template',compact('content','jurnalsP','jurnalsB','totalDebitB','totalKreditP','titleTag', 'labaRugi'));
+        $jumlah = count($data);
+
+        $this->load->view('template',compact('content','titleTag','dataAkun','data','jumlah','saldo','hasil', 'totalDebit', 'totalKredit', 's'));
     }
+
+    // public function laporanKeuanganLabaRugiDetail(){
+    //     $content = 'user/laporan_keuangan_laba_rugi';
+    //     $titleTag = 'Laporan Keuangan';
+    //     $bulan = $this->input->post('bulan',true);
+    //     $tahun = $this->input->post('tahun',true);
+    //     $jurnalsP = null;
+    //     $jurnalsB = null;
+
+    //     if(empty($bulan) || empty($tahun)){
+    //         redirect('laporan_keuangan/labaRugi');
+    //     }
+
+    //     $jurnalsP = $this->jurnal->getJurnalJoinAkunDetailFilterP($bulan,$tahun);
+    //     $jurnalsB = $this->jurnal->getJurnalJoinAkunDetailFilterB($bulan,$tahun);
+    //     $totalKreditP = $this->jurnal->getTotalSaldoDetailFilterP('kredit',$bulan,$tahun);
+    //     $totalDebitB = $this->jurnal->getTotalSaldoDetailFilterB('debit',$bulan,$tahun);
+    //     $labaRugi = null;
+
+    //     if($jurnalsP==null || $jurnalsB==null){
+    //         $this->session->set_flashdata('dataNull','Data Laporan Keuangan Dengan Bulan '.bulan($bulan).' Pada Tahun '.date('Y',strtotime($tahun)).' Tidak Di Temukan');
+    //         redirect('laporan_keuangan/labaRugi');
+    //     }
+
+    //     $this->load->view('template',compact('content','jurnalsP','jurnalsB','totalDebitB','totalKreditP','titleTag', 'labaRugi'));
+    // }
 
     public function laporanKeuanganArusKas() {
         $titleTag = 'Laporan Keuangan';

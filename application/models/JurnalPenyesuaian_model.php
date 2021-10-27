@@ -206,6 +206,7 @@ class JurnalPenyesuaian_model extends CI_Model{
         return [
             'tgl_penyesuaian'=>date('Y-m-d'),
             'no_reff'=>'',
+            'id_transaksi'=>'',
             'jenis_saldo'=>'',
             'saldo'=>'',
         ];

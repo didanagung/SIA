@@ -75,26 +75,54 @@ class Jurnal_model extends CI_Model{
                     ->result();
     }
 
-    public function getJurnalByNoReffSaldo($noReff){
-        return $this->db->select('transaksi.jenis_saldo,transaksi.saldo')
-                    ->from($this->table)            
-                    ->where('transaksi.no_reff',$noReff)
-                    ->join('akun','transaksi.no_reff = akun.no_reff')
-                    ->order_by('tgl_transaksi','ASC')
-                    ->get()
-                    ->result();
-    }
-
-    public function getJurnalByNoReffSaldoMonthYear($noReff,$bulan,$tahun){
-        return $this->db->select('transaksi.jenis_saldo,transaksi.saldo')
+    public function getJurnalByNoReffMonthYearP($noReff,$bulan,$tahun){
+        return $this->db->select('transaksi.id_transaksi,transaksi.tgl_transaksi,akun.nama_reff,transaksi.no_reff,transaksi.jenis_saldo,transaksi.saldo,transaksi.tgl_input')
                     ->from($this->table)            
                     ->where('transaksi.no_reff',$noReff)
                     ->where('month(transaksi.tgl_transaksi)',$bulan)
                     ->where('year(transaksi.tgl_transaksi)',$tahun)
+                    // ->like('transaksi.no_reff', '4')
                     ->join('akun','transaksi.no_reff = akun.no_reff')
+                    ->like('akun.nama_reff', 'pendapatan')
                     ->order_by('tgl_transaksi','ASC')
                     ->get()
                     ->result();
+                }
+
+    public function getJurnalByNoReffSaldo($noReff){
+        return $this->db->select('transaksi.jenis_saldo,transaksi.saldo')
+        ->from($this->table)            
+        ->where('transaksi.no_reff',$noReff)
+        ->join('akun','transaksi.no_reff = akun.no_reff')
+        ->order_by('tgl_transaksi','ASC')
+        ->get()
+        ->result();
+    }
+    
+    public function getJurnalByNoReffSaldoMonthYear($noReff,$bulan,$tahun){
+        return $this->db->select('transaksi.jenis_saldo,transaksi.saldo')
+        ->from($this->table)            
+        ->where('transaksi.no_reff',$noReff)
+        ->where('month(transaksi.tgl_transaksi)',$bulan)
+        ->where('year(transaksi.tgl_transaksi)',$tahun)
+        ->join('akun','transaksi.no_reff = akun.no_reff')
+        ->order_by('tgl_transaksi','ASC')
+        ->get()
+        ->result();
+    }
+    
+    public function getJurnalByNoReffSaldoMonthYearP($noReff,$bulan,$tahun){
+        return $this->db->select('transaksi.jenis_saldo,transaksi.saldo')
+        ->from($this->table)            
+        ->where('transaksi.no_reff',$noReff)
+        ->where('month(transaksi.tgl_transaksi)',$bulan)
+        ->where('year(transaksi.tgl_transaksi)',$tahun)
+        // ->like('transaksi.no_reff', '4')
+        ->join('akun','transaksi.no_reff = akun.no_reff')
+        ->like('akun.nama_reff', 'pendapatan')
+        ->order_by('tgl_transaksi','ASC')
+        ->get()
+        ->result();
     }
 
     public function getJurnalJoinAkun(){

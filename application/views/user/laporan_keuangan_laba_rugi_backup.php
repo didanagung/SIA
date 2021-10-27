@@ -58,57 +58,83 @@
                 </div>
               </div>
             </div>
+            <div class="container">
             <div class="table-responsive">
-            <?php 
-                $a=0;
-                $debit = 0;
-                $kredit = 0;
-            ?>
+                <h3>Pendapatan</h3>
               <!-- Projects table -->
               <table class="table align-items-center table-flush">
                 <thead class="thead-light">
                   <tr>
-                    <th scope="col">No. Akun</th>
-                    <th scope="col">Nama Akun</th>
-                    <th scope="col">Kredit</th>
+                    <th scope="col"></th>
+                    <th scope="col">Nominal</th>
                   </tr>
                 </thead>
                 <tbody>
-                    <?php
-                        $totalDebit=0;
-                        $totalKredit=0;
-                        for($i=0;$i<$jumlah;$i++) :                          
-                            $a++;
-                            $s=0;
-                            $deb = $saldo[$i];
-                    ?>
-                    <tr>
-                        <td>
-                            <?= $data[$i][$s]->no_reff ?>
-                        </td>
-                        <td>
-                            <?= $data[$i][$s]->nama_reff ?>
-                        </td>
-                        <?php 
-                            for($j=0;$j<count($data[$i]);$j++):
-                                    $kredit = $kredit + $deb[$j]->saldo;
-                                $hasil = $debit-$kredit;
-                            endfor 
-                        ?>
-                                <td><?= 'Rp. '.number_format(abs($hasil),0,',','.') ?></td>
-                                <?php $totalKredit += $hasil; ?>
-                        <?php
-                            $debit = 0;
-                            $kredit = 0;
-                        ?>
-                    </tr>
-                    <?php endfor ?>
-                      <tr>
-                        <td class="text-center" colspan="2"><b>Total</b></td>
-                        <td class="text-primary"><?= 'Rp. '.number_format(abs($totalKredit),0,',','.') ?></td>
-                    </tr>
+                  <?php
+                    $i=1;
+                    foreach($jurnalsP as $row):
+                      if($row->jenis_saldo=='kredit'):
+                  ?>
+                  <tr>
+                    <td>
+                    <?= $row->nama_reff ?>
+                    </td>
+                    <td>
+                    <?= 'Rp. '.number_format($row->saldo,0,',','.') ?>
+                    </td>     
+                  </tr>
+                  <?php 
+                    endif;
+                  ?>
+                  <?php endforeach ?>
+                  <tr>
+                    <td class="text"><b>Total Pendapatan</b></td>
+                    <td class="text-danger pr-5"><b><?= 'Rp. '.number_format($totalKreditP->saldo,0,',','.') ?></b></td>
+                  </tr>
                 </tbody>
               </table>
+            </div>
+            <div class="table-responsive mt-3">
+                <h3>Beban</h3>
+              <!-- Projects table -->
+              <table class="table align-items-center table-flush">
+                <thead class="thead-light">
+                  <tr>
+                    <th scope="col"></th>
+                    <th scope="col">Nominal</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <?php
+                    $i=1;
+                    foreach($jurnalsB as $rows):
+                      if($rows->jenis_saldo=='debit'):
+                  ?>
+                  <tr>
+                  <td>
+                    <?= $rows->nama_reff ?>
+                    </td>
+                    <td>
+                    <?= 'Rp. '.number_format($rows->saldo,0,',','.') ?>
+                    </td>    
+                  </tr>
+                  <?php 
+                    endif;
+                  ?>
+                  <?php endforeach ?>
+                  <tr>
+                    <td class="text"><b>Total Beban</b></td>
+                    <td class="text-danger"><b><?= 'Rp. '.number_format($totalDebitB->saldo,0,',','.') ?></b></td>
+                  </tr>
+
+                  <tr>
+                    <?php $labaRugi = $totalKreditP->saldo - $totalDebitB->saldo ?>
+                    <td class="text"><b><?= ($labaRugi < 0) ? "Rugi" :  "Laba"  ?></b></td>
+                    <td class="text-primary"><b><?= 'Rp. '.number_format($labaRugi,0,',','.')  ?></b></td>
+                  </tr>
+                </tbody>
+              </table>
+              </div>
             </div>
           </div>
         </div>

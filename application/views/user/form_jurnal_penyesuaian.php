@@ -64,8 +64,8 @@
                                 <span class="input-group-text"><i class="ni ni-calendar-grid-58"></i></span>
                             </div>
                             <input class="form-control" id="datepicker" name="tgl_penyesuaian" type="text" value="<?= $data->tgl_penyesuaian ?>">
-                        </div>
-                        <?= form_error('tgl_penyesuaian') ?>
+                          </div>
+                          <?= form_error('tgl_penyesuaian') ?>
                     </div>
                   </div>
                   <div class="row mb-4">
@@ -77,6 +77,15 @@
                     <div class="col">
                       <label for="reff">No. Reff</label>
                       <input type="text" name="reff" class="form-control" id="reff" readonly>
+                    </div>
+                    <div class="col">
+                        <label for="nama_akun">Tanggal Transaksi</label>
+                        <?=form_dropdown('nama_akun',getDropdownList('transaksi',['id_transaksi','tgl_transaksi']),$data->id_transaksi,['class'=>'form-control','id'=>'nama_akun']);?>
+                        <?= form_error('nama_akun') ?>
+                    </div>
+                    <div class="col" hidden>
+                      <label for="akun">Id Transaksi</label>
+                      <input type="text" name="akun" class="form-control" id="akun" readonly>
                     </div>
                     <div class="col">
                         <label for="jenis_saldo">Jenis Saldo</label>

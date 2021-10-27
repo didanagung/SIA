@@ -43,11 +43,6 @@
     </div>
     <!-- Page content -->
     <div class="container-fluid mt--7">
-      <div class="row">
-        <div class="col-xl-8 mb-5 mb-xl-0">
-               
-        </div>
-      </div>
       <div class="row mt-5">
         <div class="col mb-5 mb-xl-0">
           <div class="card shadow">
