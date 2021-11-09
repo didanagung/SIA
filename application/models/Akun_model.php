@@ -33,6 +33,19 @@ class Akun_model extends CI_Model{
                         ->result();
     }
 
+    public function getAkunByMonthYearB($bulan,$tahun){
+        return $this->db->select('akun.no_reff,akun.nama_reff,akun.keterangan,transaksi.tgl_transaksi')
+                        ->from($this->table)
+                        ->where('month(transaksi.tgl_transaksi)',$bulan)
+                        ->where('year(transaksi.tgl_transaksi)',$tahun)
+                        ->like('akun.nama_reff', 'beban')
+                        ->join('transaksi','transaksi.no_reff = akun.no_reff')
+                        ->group_by('akun.nama_reff')
+                        ->order_by('akun.no_reff')
+                        ->get()
+                        ->result();
+    }
+
     public function countAkunByNama($str){
         return $this->db->where('nama_reff',$str)->get($this->table)->num_rows();
     }

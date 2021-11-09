@@ -68,35 +68,30 @@
               <table class="table align-items-center table-flush">
                 <thead class="thead-light">
                   <tr>
-                    <th scope="col">No. Akun</th>
                     <th scope="col">Nama Akun</th>
-                    <th scope="col">Kredit</th>
+                    <th scope="col">Nominal</th>
                   </tr>
                 </thead>
                 <tbody>
                     <?php
-                        $totalDebit=0;
-                        $totalKredit=0;
-                        for($i=0;$i<$jumlah;$i++) :                          
+                        $totalP=0;
+                        for($i=0;$i<$jumlahP;$i++) :                          
                             $a++;
                             $s=0;
-                            $deb = $saldo[$i];
+                            $deb = $saldoP[$i];
                     ?>
                     <tr>
                         <td>
-                            <?= $data[$i][$s]->no_reff ?>
-                        </td>
-                        <td>
-                            <?= $data[$i][$s]->nama_reff ?>
+                            <?= $dataP[$i][$s]->nama_reff ?>
                         </td>
                         <?php 
-                            for($j=0;$j<count($data[$i]);$j++):
+                            for($j=0;$j<count($dataP[$i]);$j++):
                                     $kredit = $kredit + $deb[$j]->saldo;
                                 $hasil = $debit-$kredit;
                             endfor 
                         ?>
                                 <td><?= 'Rp. '.number_format(abs($hasil),0,',','.') ?></td>
-                                <?php $totalKredit += $hasil; ?>
+                                <?php $totalP += $hasil; ?>
                         <?php
                             $debit = 0;
                             $kredit = 0;
@@ -104,8 +99,54 @@
                     </tr>
                     <?php endfor ?>
                       <tr>
-                        <td class="text-center" colspan="2"><b>Total</b></td>
-                        <td class="text-primary"><?= 'Rp. '.number_format(abs($totalKredit),0,',','.') ?></td>
+                        <td class="text-center"><b>Total</b></td>
+                        <td class="text-primary"><?= 'Rp. '.number_format(abs($totalP),0,',','.') ?></td>
+                    </tr>
+                </tbody>
+              </table>
+
+              <!-- tabel beban -->
+              <table class="table align-items-center table-flush mt-3">
+                <thead class="thead-light">
+                  <tr>
+                    <th scope="col">Nama Akun</th>
+                    <th scope="col">Nominal</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    <?php
+                        $totalB=0;
+                        for($i=0;$i<$jumlahB;$i++) :                          
+                            $a++;
+                            $s=0;
+                            $deb = $saldoB[$i];
+                    ?>
+                    <tr>
+                        <td>
+                            <?= $dataB[$i][$s]->nama_reff ?>
+                        </td>
+                        <?php 
+                            for($j=0;$j<count($dataB[$i]);$j++):
+                                    $kredit = $kredit + $deb[$j]->saldo;
+                                $hasil = $debit-$kredit;
+                            endfor 
+                        ?>
+                                <td><?= 'Rp. '.number_format(abs($hasil),0,',','.') ?></td>
+                                <?php $totalB += $hasil; ?>
+                        <?php
+                            $debit = 0;
+                            $kredit = 0;
+                        ?>
+                    </tr>
+                    <?php endfor ?>
+                      <tr>
+                        <td class="text-center"><b>Total</b></td>
+                        <td class="text-primary"><?= 'Rp. '.number_format(abs($totalB),0,',','.') ?></td>
+                    </tr>
+                      <tr>
+                        <?php $nilaiTotal = $totalP - $totalB; ?>
+                        <td class="text-center"><b><?= $nilaiTotal > 0 ? 'Rugi' : 'Laba'; ?></b></td>
+                        <td class="<?= $nilaiTotal > 0 ? 'text-danger' : 'text-primary'; ?>"><?= 'Rp. '.number_format(abs($nilaiTotal),0,',','.') ?></td>
                     </tr>
                 </tbody>
               </table>
