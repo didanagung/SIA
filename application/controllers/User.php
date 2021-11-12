@@ -345,12 +345,15 @@ class User extends CI_Controller{
     }
 
     public function createJurnalPenyesuaian(){
-        $title = 'Tambah'; 
+        $title = 'Tambah Jurnal Penyesuaian'; 
         $content = 'user/form_jurnal_penyesuaian'; 
         $action = 'jurnal_penyesuaian/tambah'; 
         $tgl_input = date('Y-m-d H:i:s'); 
         $id_user = $this->session->userdata('id'); 
         $titleTag = 'Jurnal Penyesuaian';
+        $jurnals = $this->jurnal->getJurnal();
+        // var_dump($jurnals);
+        // die;
 
         if(!$_POST){
             $data = (object) $this->jurnalPenyesuaian->getDefaultValues();
@@ -368,7 +371,7 @@ class User extends CI_Controller{
         }
 
         if(!$this->jurnalPenyesuaian->validate()){
-            $this->load->view('template',compact('content','title','action','data','titleTag'));
+            $this->load->view('template',compact('content','title','action','data','titleTag', 'jurnals'));
             return;
         }
         
@@ -548,8 +551,6 @@ class User extends CI_Controller{
         $jumlah = count($data);
 
         $data = $this->load->view('user/laporan',compact('titleTag','dataAkun','bulan','tahun','jurnals','totalDebit','totalKredit','data','saldo','jumlah'),true);
-        // echo $data;
-        // die();
         $this->load->library('pdf');
         $this->pdf->setPaper('A4', 'landscape');
         $this->pdf->filename = "laporan_".bulan($bulan).'_'.$tahun;

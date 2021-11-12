@@ -47,7 +47,7 @@
             <div class="card-header border-0">
               <div class="row align-items-center">
                 <div class="col">
-                  <h3 class="mb-3"><?= $title ?> Jurnal Penyesuaian</h3>
+                  <h3 class="mb-3"><?= $title ?></h3>
                 </div>
                 <div class="col-12 my-3 form-1">
                   <form action="<?= base_url($action) ?>" method="post">
@@ -80,10 +80,51 @@
                     </div>
                     <div class="col">
                         <label for="nama_akun">Tanggal Transaksi</label>
-                        <?=form_dropdown('nama_akun',getDropdownList('transaksi',['id_transaksi','tgl_transaksi']),$data->id_transaksi,['class'=>'form-control','id'=>'nama_akun']);?>
-                        <?= form_error('nama_akun') ?>
+                        <!-- Button trigger modal -->
+                      <button type="button" class="btn btn-instagram" data-toggle="modal" data-target="#exampleModal">
+                        Pilih Tanggal
+                      </button>
+
+                      <!-- Modal -->
+                      <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="exampleModalLabel">Pilih Tanggal Transaksi</h5>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                            </div>
+                            <div class="modal-body">
+                            <table class="table">
+                              <thead>
+                                <tr>
+                                  <th scope="col">No_reff</th>
+                                  <th scope="col">Transaksi</th>
+                                  <th scope="col">Jenis</th>
+                                  <th scope="col">Saldo</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <?php foreach($jurnals as $jurnal): ?>
+                                <tr>
+                                    <th scope="row"><?= $jurnal->no_reff; ?></th>
+                                    <td><?= $jurnal->tgl_transaksi; ?></td>
+                                    <td><?= $jurnal->jenis_saldo; ?></td>
+                                    <td><?= 'Rp. '.number_format($jurnal->saldo,0,',','.'); ?></td>
+                                  </tr>
+                                  <?php endforeach; ?>
+                              </tbody>
+                            </table>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <div class="col" hidden>
+                    <div class="col">
                       <label for="akun">Id Transaksi</label>
                       <input type="text" name="akun" class="form-control" id="akun" readonly>
                     </div>
