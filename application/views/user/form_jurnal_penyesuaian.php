@@ -87,19 +87,18 @@
 
                       <!-- Modal -->
                       <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
+                        <div class="modal-dialog modal-lg" role="document">
                           <div class="modal-content">
                             <div class="modal-header">
                               <h5 class="modal-title" id="exampleModalLabel">Pilih Tanggal Transaksi</h5>
-                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                              </button>
                             </div>
                             <div class="modal-body">
-                            <table class="table">
+                            <table class="table" id="tabelModalTransaksi">
                               <thead>
                                 <tr>
-                                  <th scope="col">No_reff</th>
+                                  <th scope="col">Pilih</th>
+                                  <th scope="col" hidden>Id</th>
+                                  <th scope="col">Nama</th>
                                   <th scope="col">Transaksi</th>
                                   <th scope="col">Jenis</th>
                                   <th scope="col">Saldo</th>
@@ -108,7 +107,9 @@
                               <tbody>
                                 <?php foreach($jurnals as $jurnal): ?>
                                 <tr>
-                                    <th scope="row"><?= $jurnal->no_reff; ?></th>
+                                    <th scope="row"><input name="radioOptions" type="radio" id="exampleRadios<?= $jurnal->id_transaksi; ?>" value="option<?= $jurnal->id_transaksi; ?>"> <?= $jurnal->no_reff; ?></th>
+                                    <td hidden><?= $jurnal->id_transaksi; ?></td>
+                                    <td><?= $jurnal->nama_reff; ?></td>
                                     <td><?= $jurnal->tgl_transaksi; ?></td>
                                     <td><?= $jurnal->jenis_saldo; ?></td>
                                     <td><?= 'Rp. '.number_format($jurnal->saldo,0,',','.'); ?></td>
@@ -119,6 +120,7 @@
                             </div>
                             <div class="modal-footer">
                               <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                              <button type="button" class="btn btn-primary" id="buttonPilih" data-dismiss="modal">Pilih</button>
                             </div>
                           </div>
                         </div>

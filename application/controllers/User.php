@@ -351,9 +351,7 @@ class User extends CI_Controller{
         $tgl_input = date('Y-m-d H:i:s'); 
         $id_user = $this->session->userdata('id'); 
         $titleTag = 'Jurnal Penyesuaian';
-        $jurnals = $this->jurnal->getJurnal();
-        // var_dump($jurnals);
-        // die;
+        $jurnals = $this->jurnal->getJurnalJoinAkun();
 
         if(!$_POST){
             $data = (object) $this->jurnalPenyesuaian->getDefaultValues();
@@ -387,17 +385,23 @@ class User extends CI_Controller{
             $content = 'user/form_jurnal_penyesuaian'; 
             $action = 'jurnal_penyesuaian/edit'; 
             $titleTag = 'Jurnal Penyesuaian';
+            $jurnals = $this->jurnal->getJurnalJoinAkun();
 
             $data = (object) $this->jurnalPenyesuaian->getJurnalById($id);
 
-            $this->load->view('template',compact('content','title','action','data','id','titleTag'));
+            $this->load->view('template',compact('content','title','action','data','id','titleTag', 'jurnals'));
         }else{
             redirect('jurnal_penyesuaian');
         }
     }
 
     public function editJurnalPenyesuaian(){
-        $title = 'Edit'; $content = 'user/form_jurnal_penyesuaian'; $action = 'jurnal_penyesuaian/edit'; $tgl_input = date('Y-m-d H:i:s'); $id_user = $this->session->userdata('id'); $titleTag = 'Edit Jurnal Penyesuaian';
+        $title = 'Edit';
+        $content = 'user/form_jurnal_penyesuaian'; 
+        $action = 'jurnal_penyesuaian/edit'; 
+        $tgl_input = date('Y-m-d H:i:s'); 
+        $id_user = $this->session->userdata('id'); 
+        $titleTag = 'Edit Jurnal Penyesuaian';
 
         if($_POST){
             $data = (object) [
@@ -405,6 +409,7 @@ class User extends CI_Controller{
                 'no_reff'=>$this->input->post('no_reff',true),
                 'tgl_input'=>$tgl_input,
                 'tgl_penyesuaian'=>$this->input->post('tgl_penyesuaian',true),
+                'id_transaksi'=>$this->input->post('akun',true),
                 'jenis_saldo'=>$this->input->post('jenis_saldo',true),
                 'saldo'=>$this->input->post('saldo',true)
             ];

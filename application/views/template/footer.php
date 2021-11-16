@@ -25,6 +25,21 @@
   <script src="<?= base_url('assets/vendor/sweetalert/sweetalert2.all.min.js') ?>"></script>
   <!-- Custom JS -->
   <script src="<?= base_url('assets/js/script.js') ?>"></script>
+  <!-- Script Pilih Data Tabel Transaksi -->
+  <script>
+    let arr;
+    let idTransaksi = $('#akun');
+    console.log(idTransaksi);
+
+      $('#buttonPilih').click(function(){
+          arr = $('#tabelModalTransaksi').find('[type="radio"]:checked').map(function(){
+                return $(this).closest('tr').find('td:nth-child(2)').text();
+          }).get();
+
+          idTransaksi.val(arr);
+      });
+  </script>
+  <!-- Selesai Script Pilih Data Tabel Transaksi -->
   <?php
     $pesan = $this->session->flashdata('berhasil');
     if(!empty($pesan)):
