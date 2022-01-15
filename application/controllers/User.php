@@ -463,7 +463,6 @@ class User extends CI_Controller{
         $dataP = null;
         $dataB = null;
         $saldoP = null;
-        $saldoP = null;
         $hasil = null;
         $totalP = null;
         $totalB = null;
@@ -488,6 +487,148 @@ class User extends CI_Controller{
         $jumlahB = count($dataB);
 
         $this->load->view('template',compact('content','titleTag','dataAkunP','dataAkunB','dataP','dataB','jumlahP','jumlahB','saldoP','saldoB','hasil', 'totalP', 'totalB', 's'));
+    }
+
+    public function laporanKeuanganPerubahanModal() {
+        $titleTag = 'Laporan Keuangan';
+        $content = 'user/laporan_keuangan_perubahan_modal_main';
+        $listJurnal = $this->jurnal->getJurnalByYearAndMonth();
+        $tahun = $this->jurnal->getJurnalByYear();
+        $this->load->view('template',compact('content','listJurnal','titleTag','tahun'));
+    }
+
+    public function laporanKeuanganPerubahanModalDetail() {
+        $content = 'user/laporan_keuangan_perubahan_modal';
+        $titleTag = 'Laporan Keuangan';
+
+        $bulan = $this->input->post('bulan',true);
+        $tahun = $this->input->post('tahun',true);
+
+        if(empty($bulan) || empty($tahun)){
+            redirect('laporan_keuangan/perubahanModal');
+        }
+
+        $dataAkunM = $this->akun->getAkunByMonthYearM($bulan,$tahun);
+        $dataAkunP = $this->akun->getAkunByMonthYearP($bulan,$tahun);
+        $dataAkunPr = $this->akun->getAkunByMonthYearPr($bulan,$tahun);
+        $dataAkunB = $this->akun->getAkunByMonthYearB($bulan,$tahun);
+        $dataM = null;
+        $dataP = null;
+        $dataPr = null;
+        $dataB = null;
+        $saldoM = null;
+        $saldoP = null;
+        $saldoPr = null;
+        $saldoB = null;
+        $hasil = null;
+        $totalM = null;
+        $totalP = null;
+        $totalPr = null;
+        $totalB = null;
+        $s = null;
+        
+        foreach($dataAkunM as $row){
+            $dataM[] = (array) $this->jurnal->getJurnalByNoReffMonthYearM($row->no_reff,$bulan,$tahun);
+            $saldoM[] = (array) $this->jurnal->getJurnalByNoReffSaldoMonthYearM($row->no_reff,$bulan,$tahun);
+        }
+
+        foreach($dataAkunP as $row){
+            $dataP[] = (array) $this->jurnal->getJurnalByNoReffMonthYearP($row->no_reff,$bulan,$tahun);
+            $saldoP[] = (array) $this->jurnal->getJurnalByNoReffSaldoMonthYearP($row->no_reff,$bulan,$tahun);
+        }
+
+        foreach($dataAkunPr as $row){
+            $dataPr[] = (array) $this->jurnal->getJurnalByNoReffMonthYearPr($row->no_reff,$bulan,$tahun);
+            $saldoPr[] = (array) $this->jurnal->getJurnalByNoReffSaldoMonthYearPr($row->no_reff,$bulan,$tahun);
+        }
+
+        foreach($dataAkunB as $row){
+            $dataB[] = (array) $this->jurnal->getJurnalByNoReffMonthYearB($row->no_reff,$bulan,$tahun);
+            $saldoB[] = (array) $this->jurnal->getJurnalByNoReffSaldoMonthYearB($row->no_reff,$bulan,$tahun);
+        }
+
+        if($dataP == null || $saldoP == null ||$dataPr == null || $saldoPr == null || $saldoB == null || $dataB == null || $saldoM == null || $dataM == null){
+            $this->session->set_flashdata('dataNull','Laporan Perubahan Modal Dengan Bulan '.bulan($bulan).' Pada Tahun '.date('Y',strtotime($tahun)).' Tidak Di Temukan');
+            redirect('laporan_keuangan/labaRugi');
+        }
+
+        $jumlahM = count($dataM);
+        $jumlahP = count($dataP);
+        $jumlahPr = count($dataPr);
+        $jumlahB = count($dataB);
+
+        $this->load->view('template',compact('content','titleTag', 'dataAkunM' ,'dataAkunP', 'dataAkunPr' ,'dataAkunB', 'dataM' ,'dataP', 'dataPr' ,'dataB', 'jumlahM' ,'jumlahP', 'jumlahPr' ,'jumlahB', 'saldoM' ,'saldoP', 'saldoPr' ,'saldoB','hasil', 'totalM' , 'totalP', 'totalPr' , 'totalB', 's'));
+    }
+
+    public function laporanKeuanganNeraca() {
+        $titleTag = 'Laporan Keuangan';
+        $content = 'user/laporan_keuangan_neraca_main';
+        $listJurnal = $this->jurnal->getJurnalByYearAndMonth();
+        $tahun = $this->jurnal->getJurnalByYear();
+        $this->load->view('template',compact('content','listJurnal','titleTag','tahun'));
+    }
+
+    public function laporanKeuanganNeracaDetail() {
+        $content = 'user/laporan_keuangan_neraca';
+        $titleTag = 'Laporan Keuangan';
+
+        $bulan = $this->input->post('bulan',true);
+        $tahun = $this->input->post('tahun',true);
+
+        if(empty($bulan) || empty($tahun)){
+            redirect('laporan_keuangan/neraca');
+        }
+
+        $dataAkunA = $this->akun->getAkunByMonthYearA($bulan,$tahun);
+        $dataAkunAt = $this->akun->getAkunByMonthYearAt($bulan,$tahun);
+        $dataAkunU = $this->akun->getAkunByMonthYearU($bulan,$tahun);
+        $dataAkunMp = $this->akun->getAkunByMonthYearMp($bulan,$tahun);
+        $dataA = null;
+        $dataAt = null;
+        $dataU = null;
+        $dataMp = null;
+        $saldoA = null;
+        $saldoAt = null;
+        $saldoU = null;
+        $saldoMp = null;
+        $hasil = null;
+        $totalA = null;
+        $totalAt = null;
+        $totalU = null;
+        $totalMp = null;
+        $s = null;
+        
+        foreach($dataAkunA as $row){
+            $dataA[] = (array) $this->jurnal->getJurnalByNoReffMonthYearA($row->no_reff,$bulan,$tahun);
+            $saldoA[] = (array) $this->jurnal->getJurnalByNoReffSaldoMonthYearA($row->no_reff,$bulan,$tahun);
+        }
+
+        foreach($dataAkunAt as $row){
+            $dataAt[] = (array) $this->jurnal->getJurnalByNoReffMonthYearAt($row->no_reff,$bulan,$tahun);
+            $saldoAt[] = (array) $this->jurnal->getJurnalByNoReffSaldoMonthYearAt($row->no_reff,$bulan,$tahun);
+        }
+
+        foreach($dataAkunU as $row){
+            $dataU[] = (array) $this->jurnal->getJurnalByNoReffMonthYearU($row->no_reff,$bulan,$tahun);
+            $saldoU[] = (array) $this->jurnal->getJurnalByNoReffSaldoMonthYearU($row->no_reff,$bulan,$tahun);
+        }
+
+        foreach($dataAkunMp as $row){
+            $dataMp[] = (array) $this->jurnal->getJurnalByNoReffMonthYearMp($row->no_reff,$bulan,$tahun);
+            $saldoMp[] = (array) $this->jurnal->getJurnalByNoReffSaldoMonthYearMp($row->no_reff,$bulan,$tahun);
+        }
+
+        if($dataA == null || $saldoA == null || $dataAt == null || $saldoAt == null || $dataU == null || $saldoU == null || $dataMp == null || $saldoMp == null){
+            $this->session->set_flashdata('dataNull','Laporan Neraca Dengan Bulan '.bulan($bulan).' Pada Tahun '.date('Y',strtotime($tahun)).' Tidak Di Temukan');
+            redirect('laporan_keuangan/neraca');
+        }
+
+        $jumlahA = count($dataA);
+        $jumlahAt = count($dataAt);
+        $jumlahU = count($dataU);
+        $jumlahMp = count($dataMp);
+
+        $this->load->view('template',compact('content','titleTag','dataAkunA', 'dataAkunAt', 'dataAkunU', 'dataAkunMp' ,'dataA', 'dataAt', 'dataU', 'dataMp' ,'jumlahA', 'jumlahAt', 'jumlahU', 'jumlahMp' ,'saldoA', 'saldoAt', 'saldoU', 'saldoMp' ,'hasil', 'totalA', 'totalAt', 'totalU', 'totalMp' , 's'));
     }
 
     public function laporanKeuanganArusKas() {

@@ -60,8 +60,8 @@
               <div class="row">
                 <div class="col my-3">
                   <a href="<?= base_url('laporan_keuangan/labaRugi') ?>" class="btn btn-primary mt-2">Laba / Rugi</a>
-                  <a href="<?= base_url('laporan_keuangan/labaRugi') ?>" class="btn btn-primary mt-2">Perubahan Modal</a>
-                  <a href="<?= base_url('laporan_keuangan/labaRugi') ?>" class="btn btn-primary mt-2">Neraca</a>
+                  <a href="<?= base_url('laporan_keuangan/perubahanModal') ?>" class="btn btn-primary mt-2">Perubahan Modal</a>
+                  <a href="<?= base_url('laporan_keuangan/neraca') ?>" class="btn btn-primary mt-2">Neraca</a>
                   <a href="<?= base_url('laporan_keuangan/arusKas') ?>" class="btn btn-primary mt-2">Arus Kas</a>
                 </div>
               </div>

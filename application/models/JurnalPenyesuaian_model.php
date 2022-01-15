@@ -2,7 +2,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 class JurnalPenyesuaian_model extends CI_Model{
-    private $table1 = 'transaksi';
+    // private $table1 = 'transaksi';
     private $table2 = 'penyesuaian';
 
     public function getJurnal(){
@@ -141,7 +141,7 @@ class JurnalPenyesuaian_model extends CI_Model{
                         ->from($this->table2)
                         ->where('month(penyesuaian.tgl_penyesuaian)',$bulan)
                         ->where('year(penyesuaian.tgl_penyesuaian)',$tahun)
-                        ->like('penyesuaian.no_reff','5')
+                        ->like('penyesuaian.no_reff','6')
                         ->join('akun','penyesuaian.no_reff = akun.no_reff')
                         ->order_by('tgl_penyesuaian','ASC')
                         ->order_by('tgl_input','ASC')
@@ -177,7 +177,7 @@ class JurnalPenyesuaian_model extends CI_Model{
                         ->where('month(penyesuaian.tgl_penyesuaian)',$bulan)
                         ->where('year(penyesuaian.tgl_penyesuaian)',$tahun)
                         ->where('jenis_saldo',$jenis_saldo)
-                        ->like('penyesuaian.no_reff', '5')
+                        ->like('penyesuaian.no_reff', '6')
                         ->get()
                         ->row();
     }

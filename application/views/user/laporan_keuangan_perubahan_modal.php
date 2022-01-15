@@ -4,7 +4,7 @@
     <nav class="navbar navbar-top navbar-expand-md navbar-dark" id="navbar-main">
       <div class="container-fluid">
         <!-- Brand -->
-        <a class="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block" href="<?= base_url('laporan_keuangan/labaRugi') ?>">&laquo Laporan Keuangan Laba / Rugi</a>
+        <a class="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block" href="<?= base_url('laporan_keuangan/perubahanModal') ?>">&laquo Laporan Perubahan Modal</a>
         <!-- Form -->
         <form class="navbar-search navbar-search-dark form-inline mr-3 d-none d-md-flex ml-lg-auto">
           <div class="form-group mb-0">
@@ -54,7 +54,7 @@
             <div class="card-header border-0">
               <div class="row align-items-center">
                 <div class="col">
-                  <h3 class="mb-0">Laporan Keuangan Laba / Rugi</h3>
+                  <h3 class="mb-0">Laporan Perubahan Modal</h3>
                 </div>
               </div>
             </div>
@@ -68,11 +68,37 @@
               <table class="table align-items-center table-flush">
                 <thead class="thead-light">
                   <tr>
-                    <th scope="col">Pendapatan : </th>
+                    <th scope="col">Nama Akun</th>
                     <th scope="col" class="text-right">Nominal</th>
                   </tr>
                 </thead>
                 <tbody>
+                    <?php
+                        $totalM=0;
+                        for($i=0;$i<$jumlahM;$i++) :                          
+                            $a++;
+                            $s=0;
+                            $deb = $saldoM[$i];
+                    ?>
+                    <tr>
+                        <td>
+                            <?= $dataM[$i][$s]->nama_reff ?>  
+                        </td>
+                        <?php 
+                            for($j=0;$j<count($dataM[$i]);$j++):
+                                    $kredit = $kredit + $deb[$j]->saldo;
+                                $hasil = $debit-$kredit;
+                            endfor 
+                        ?>
+                                <td class="text-right"><?= 'Rp. '.number_format(abs($hasil),0,',','.') ?></td>
+                                <?php $totalM += $hasil; ?>
+                        <?php
+                            $debit = 0;
+                            $kredit = 0;
+                        ?>
+                    </tr>
+                    <?php endfor ?>
+
                     <?php
                         $totalP=0;
                         for($i=0;$i<$jumlahP;$i++) :                          
@@ -80,7 +106,7 @@
                             $s=0;
                             $deb = $saldoP[$i];
                     ?>
-                    <tr>
+                    <tr hidden>
                         <td>
                             <?= $dataP[$i][$s]->nama_reff ?>  
                         </td>
@@ -98,22 +124,22 @@
                         ?>
                     </tr>
                     <?php endfor ?>
-                      <tr>
-                        <td class="text-center"><b>Total Pendapatan</b></td>
+                      <tr hidden>
+                        <td class="text-center"><b>Total</b></td>
                         <td class="text-primary text-right"><?= 'Rp. '.number_format(abs($totalP),0,',','.') ?></td>
                     </tr>
-                </tbody>
+                <!-- </tbody>
               </table>
 
-              <!-- tabel beban -->
+              tabel beban
               <table class="table align-items-center table-flush mt-3">
                 <thead class="thead-light">
                   <tr>
-                    <th scope="col">Beban Operasional : </th>
+                    <th scope="col">Nama Akun</th>
                     <th scope="col" class="text-right">Nominal</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody> -->
                     <?php
                         $totalB=0;
                         for($i=0;$i<$jumlahB;$i++) :                          
@@ -121,7 +147,7 @@
                             $s=0;
                             $deb = $saldoB[$i];
                     ?>
-                    <tr>
+                    <tr hidden>
                         <td>
                             <?= $dataB[$i][$s]->nama_reff ?>
                         </td>
@@ -139,14 +165,47 @@
                         ?>
                     </tr>
                     <?php endfor ?>
-                      <tr>
-                        <td class="text-center"><b>Total Beban Operasional</b></td>
+                      <tr hidden>
+                        <td class="text-center"><b>Total</b></td>
                         <td class="text-primary text-right"><?= 'Rp. '.number_format(abs($totalB),0,',','.') ?></td>
                     </tr>
                       <tr>
                         <?php $nilaiTotal = $totalP - $totalB; ?>
-                        <td class="text-center"><b><?= $nilaiTotal > 0 ? 'Rugi' : 'Laba Bersih'; ?></b></td>
-                        <td class="text-right <?= $nilaiTotal > 0 ? 'text-danger' : 'text-success'; ?>"><?= 'Rp. '.number_format(abs($nilaiTotal),0,',','.') ?></td>
+                        <td>Laba Setelah Pajak</td>
+                        <td class="text-right"><?= 'Rp. '.number_format(abs($nilaiTotal),0,',','.') ?></td>
+                    </tr>
+                    <tr>
+                        <td class="text-center"><b></b></td>
+                        <td class="text-primary text-right"><?= 'Rp. '.number_format(abs($totalM + $nilaiTotal),0,',','.') ?></td>
+                    </tr>
+                    <?php
+                        $totalPr=0;
+                        for($i=0;$i<$jumlahPr;$i++) :                          
+                            $a++;
+                            $s=0;
+                            $deb = $saldoPr[$i];
+                    ?>
+                    <tr>
+                        <td>
+                            <?= $dataPr[$i][$s]->nama_reff ?>  
+                        </td>
+                        <?php 
+                            for($j=0;$j<count($dataPr[$i]);$j++):
+                                    $kredit = $kredit + $deb[$j]->saldo;
+                                $hasil = $debit-$kredit;
+                            endfor 
+                        ?>
+                                <td class="text-right"><?= 'Rp. '.number_format(abs($hasil),0,',','.') ?></td>
+                                <?php $totalPr += $hasil; ?>
+                        <?php
+                            $debit = 0;
+                            $kredit = 0;
+                        ?>
+                    </tr>
+                    <?php endfor ?>
+                    <tr>
+                        <td><b>Modal Akhir</b></td>
+                        <td class="text-success text-right"><?= 'Rp. '.number_format(abs($totalM + $nilaiTotal + $totalPr),0,',','.') ?></td>
                     </tr>
                 </tbody>
               </table>
