@@ -54,7 +54,10 @@
             <div class="card-header border-0">
               <div class="row align-items-center">
                 <div class="col">
-                  <h3 class="mb-0">Laporan Keuangan Laba / Rugi</h3>
+                  <h3 class="mb-0">Laporan Keuangan Laba / Rugi Bulan <?= bulan($bulan); ?> Tahun <?= $tahun; ?></h3>
+                        <?= form_open('laporan/excel/labaRugi','',['bulan'=>$bulan,'tahun'=>$tahun]) ?>
+                        <?= form_button(['type'=>'submit','content'=>'Unduh Laporan','class'=>'btn btn-success mr-3 mt-2']) ?>
+                        <?= form_close() ?>
                 </div>
               </div>
             </div>

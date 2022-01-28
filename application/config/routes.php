@@ -102,6 +102,7 @@ $route['laporan_keuangan/arusKas/detail'] = 'user/laporanKeuanganArusKasDetail';
 // LAPORAN
 $route['laporan'] = 'user/laporan';
 $route['laporan/cetak'] = 'user/laporanCetak';
+$route['laporan/excel/labaRugi'] = 'user/excelLaporanLabaRugi';
 
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;

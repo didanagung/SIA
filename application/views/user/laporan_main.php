@@ -112,6 +112,11 @@
                         <?= form_button(['type'=>'submit','content'=>'Cetak Laporan','class'=>'btn btn-success mr-3']) ?>
                         <?= form_close() ?>
                     </td>
+                    <td scope="col">
+                        <?= form_open('laporan/excel','',['bulan'=>$bulan,'tahun'=>$tahun]) ?>
+                        <?= form_button(['type'=>'submit','content'=>'Cetak Laporan Excel','class'=>'btn btn-success mr-3']) ?>
+                        <?= form_close() ?>
+                    </td>
                   </tr>
                   <?php
                     endforeach;

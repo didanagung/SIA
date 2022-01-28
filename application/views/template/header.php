@@ -8,7 +8,7 @@
   <meta name="author" content="Creative Tim">
   <title>SIA | <?= $titleTag ?></title>
   <!-- Favicon -->
-  <link href="<?= base_url('assets/img/brand/favicon.png') ?>" rel="icon" type="image/png">
+  <link href="<?= base_url('assets/img/brand/logo.jpeg') ?>" rel="icon" type="image/png">
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
   <!-- Icons -->
@@ -26,7 +26,7 @@
       </button>
       <!-- Brand -->
       <a class="navbar-brand pt-0" href="<?= base_url('dashboard') ?>">
-        <img src="<?= base_url('assets/img/brand/blue.png') ?>" class="navbar-brand-img" alt="...">
+        <img src="<?= base_url('assets/img/brand/logo.jpeg') ?>" class="navbar-brand-img" alt="...">
       </a>
       <!-- User -->
       <ul class="nav align-items-center d-md-none">
