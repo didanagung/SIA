@@ -100,9 +100,12 @@ $route['laporan_keuangan/arusKas'] = 'user/laporanKeuanganArusKas';
 $route['laporan_keuangan/arusKas/detail'] = 'user/laporanKeuanganArusKasDetail';
 
 // LAPORAN
-$route['laporan'] = 'user/laporan';
-$route['laporan/cetak'] = 'user/laporanCetak';
+// $route['laporan'] = 'user/laporan';
+// $route['laporan/cetak'] = 'user/laporanCetak';
 $route['laporan/excel/labaRugi'] = 'user/excelLaporanLabaRugi';
+$route['laporan/excel/perubahanModal'] = 'user/excelLaporanPerubahanModal';
+$route['laporan/excel/neraca'] = 'user/excelLaporanNeraca';
+$route['laporan/excel/arusKas'] = 'user/excelLaporanArusKas';
 
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;

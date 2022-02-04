@@ -109,11 +109,11 @@
             <i class="ni ni-book-bookmark text-primary"></i> Laporan Keuangan
             </a>
           </li>
-          <li class="nav-item <?= ($titleTag == "Laporan") ? "active" : "" ?>">
+          <!-- <li class="nav-item <?= ($titleTag == "Laporan") ? "active" : "" ?>">
             <a class="nav-link" href="<?= base_url('laporan') ?>">
             <i class="fas fa-file-pdf text-red"></i>Laporan
             </a>
-          </li>
+          </li> -->
         </ul>
       </div>
     </div>
