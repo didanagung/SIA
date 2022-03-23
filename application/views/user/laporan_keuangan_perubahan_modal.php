@@ -131,18 +131,6 @@
                         <td class="text-center"><b>Total</b></td>
                         <td class="text-primary text-right"><?= 'Rp. '.number_format(abs($totalP),0,',','.') ?></td>
                     </tr>
-                <!-- </tbody>
-              </table>
-
-              tabel beban
-              <table class="table align-items-center table-flush mt-3">
-                <thead class="thead-light">
-                  <tr>
-                    <th scope="col">Nama Akun</th>
-                    <th scope="col" class="text-right">Nominal</th>
-                  </tr>
-                </thead>
-                <tbody> -->
                     <?php
                         $totalB=0;
                         for($i=0;$i<$jumlahB;$i++) :                          

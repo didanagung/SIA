@@ -45,7 +45,8 @@ class User_model extends CI_Model{
             $sessionData = [
                 'login'=>true,
                 'username'=>$user->nama,
-                'id'=>$user->id_user
+                'id'=>$user->id_user,
+                'role'=>$user->role
             ];
             $this->session->set_userdata($sessionData);
             return true;
@@ -55,7 +56,7 @@ class User_model extends CI_Model{
     }
 
     public function logout(){
-        $sessionData = ['login','username','id'];
+        $sessionData = ['login','username','id','role'];
         $this->session->unset_userdata($sessionData);
         $this->session->sess_destroy();
     }

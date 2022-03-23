@@ -79,11 +79,13 @@
               <i class="ni ni-tv-2 text-primary"></i> Dashboard
             </a>
           </li>
+          <?php if($this->session->userdata('role') == 'direktur') : ?>
           <li class="nav-item <?= ($titleTag == "Data Akun") ? "active" : "" ?>">
             <a class="nav-link" href="<?= base_url('data_akun') ?>">
             <i class="ni ni-bullet-list-67 text-red"></i> Data Akun
             </a>
           </li>
+          <?php endif; ?>
           <li class="nav-item <?= ($titleTag == "Jurnal Umum") ? "active" : "" ?>">
             <a class="nav-link" href="<?= base_url('jurnal_umum') ?>">
             <i class="ni ni-single-copy-04 text-yellow"></i> Jurnal Umum
@@ -104,11 +106,13 @@
             <i class="ni ni-single-copy-04 text-red"></i> Jurnal Penyesuaian
             </a>
           </li>
+          <?php if($this->session->userdata('role') == 'direktur') : ?>
           <li class="nav-item <?= ($titleTag == "Laporan Keuangan" || $titleTag == "Laporan Keuangan") ? "active" : "" ?>">
             <a class="nav-link" href="<?= base_url('laporan_keuangan') ?>">
             <i class="ni ni-book-bookmark text-primary"></i> Laporan Keuangan
             </a>
           </li>
+          <?php endif; ?>
           <!-- <li class="nav-item <?= ($titleTag == "Laporan") ? "active" : "" ?>">
             <a class="nav-link" href="<?= base_url('laporan') ?>">
             <i class="fas fa-file-pdf text-red"></i>Laporan

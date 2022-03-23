@@ -29,12 +29,6 @@ class User extends CI_Controller{
             $data[] = (array) $this->jurnal->getJurnalByNoReff($row->no_reff);
             $saldo[] = (array) $this->jurnal->getJurnalByNoReffSaldo($row->no_reff);
         }
-
-        // if($data == null || $saldo == null){
-        //     $data = 0;
-        //     $saldo = 0;
-        // }
-        
         $jumlah = count($data);
 
         $jurnals = $this->jurnal->getJurnalJoinAkun();
@@ -44,10 +38,14 @@ class User extends CI_Controller{
     }
 
     public function dataAkun(){
-        $content = 'user/data_akun';
-        $titleTag = 'Data Akun';
-        $dataAkun = $this->akun->getAkun();
-        $this->load->view('template',compact('content','dataAkun','titleTag'));
+        if($this->session->userdata('role') != 'direktur') {
+            show_404();
+        }else {
+            $content = 'user/data_akun';
+            $titleTag = 'Data Akun';
+            $dataAkun = $this->akun->getAkun();
+            $this->load->view('template',compact('content','dataAkun','titleTag'));
+        }
     }
 
     public function isNamaAkunThere($str){
@@ -69,61 +67,73 @@ class User extends CI_Controller{
     }
 
     public function createAkun(){
-        $title = 'Tambah';
-        $titleTag = 'Data Akun';
-        $action = 'data_akun/tambah';
-        $content = 'user/form_akun';
+        if($this->session->userdata('role') != 'direktur') {
+            show_404();
+        }else {
+            $title = 'Tambah';
+            $titleTag = 'Data Akun';
+            $action = 'data_akun/tambah';
+            $content = 'user/form_akun';
 
-        if(!$_POST){
-            $data = (object) $this->akun->getDefaultValues();
-        }else{
-            $data = (object) $this->input->post(null,true);
-            $data->id_user = $this->session->userdata('id');
-        }
+            if(!$_POST){
+                $data = (object) $this->akun->getDefaultValues();
+            }else{
+                $data = (object) $this->input->post(null,true);
+                $data->id_user = $this->session->userdata('id');
+            }
 
-        if(!$this->akun->validate()){
-            $this->load->view('template',compact('content','title','action','data','titleTag'));
-            return;
+            if(!$this->akun->validate()){
+                $this->load->view('template',compact('content','title','action','data','titleTag'));
+                return;
+            }
+            
+            $this->akun->insertAkun($data);
+            $this->session->set_flashdata('berhasil','Data Akun Berhasil Di Tambahkan');
+            redirect('data_akun');
         }
-        
-        $this->akun->insertAkun($data);
-        $this->session->set_flashdata('berhasil','Data Akun Berhasil Di Tambahkan');
-        redirect('data_akun');
     }
 
     public function editAkun($no_reff = null){
-        $title = 'Edit';
-        $titleTag = 'Data Akun';
-        $action = 'data_akun/edit/'.$no_reff;
-        $content = 'user/form_akun';
+        if($this->session->userdata('role') != 'direktur') {
+            show_404();
+        }else {
+            $title = 'Edit';
+            $titleTag = 'Data Akun';
+            $action = 'data_akun/edit/'.$no_reff;
+            $content = 'user/form_akun';
 
-        if(!$_POST){
-            $data = (object) $this->akun->getAkunByNo($no_reff);
-        }else{
-            $data = (object) $this->input->post(null,true);
-            $data->id_user = $this->session->userdata('id');
-        }
+            if(!$_POST){
+                $data = (object) $this->akun->getAkunByNo($no_reff);
+            }else{
+                $data = (object) $this->input->post(null,true);
+                $data->id_user = $this->session->userdata('id');
+            }
 
-        if(!$this->akun->validate()){
-            $this->load->view('template',compact('content','title','action','data','titleTag'));
-            return;
+            if(!$this->akun->validate()){
+                $this->load->view('template',compact('content','title','action','data','titleTag'));
+                return;
+            }
+            
+            $this->akun->updateAkun($no_reff,$data);
+            $this->session->set_flashdata('berhasil','Data Akun Berhasil Di Ubah');
+            redirect('data_akun');
         }
-        
-        $this->akun->updateAkun($no_reff,$data);
-        $this->session->set_flashdata('berhasil','Data Akun Berhasil Di Ubah');
-        redirect('data_akun');
     }
 
     public function deleteAkun(){
-        $id = $this->input->post('id',true);
-        $noReffTransaksi = $this->jurnal->countJurnalNoReff($id);
-        if($noReffTransaksi >= 0 ){
-            $this->session->set_flashdata('dataNull','No.Reff '.$id.' Tidak Bisa Di Hapus Karena Data Akun Ada Di Jurnal Umum');
+        if($this->session->userdata('role') != 'direktur') {
+            show_404();
+        }else {
+            $id = $this->input->post('id',true);
+            $noReffTransaksi = $this->jurnal->countJurnalNoReff($id);
+            if($noReffTransaksi >= 0 ){
+                $this->session->set_flashdata('dataNull','No.Reff '.$id.' Tidak Bisa Di Hapus Karena Data Akun Ada Di Jurnal Umum');
+                redirect('data_akun');
+            }
+            $this->akun->deleteAkun($id);
+            $this->session->set_flashdata('berhasilHapus','Data akun dengan No.Reff '.$id.' berhasil di hapus');
             redirect('data_akun');
         }
-        $this->akun->deleteAkun($id);
-        $this->session->set_flashdata('berhasilHapus','Data akun dengan No.Reff '.$id.' berhasil di hapus');
-        redirect('data_akun');
     }
 
     public function jurnalUmum(){
@@ -278,12 +288,12 @@ class User extends CI_Controller{
     }
 
     public function neracaSaldo(){
-        $titleTag = 'Neraca Saldo';
-        $content = 'user/neraca_saldo_main';
-        $listJurnal = $this->jurnal->getJurnalByYearAndMonth();
-        $tahun = $this->jurnal->getJurnalByYear();
-        $this->load->view('template',compact('content','listJurnal','titleTag','tahun'));
-    }
+            $titleTag = 'Neraca Saldo';
+            $content = 'user/neraca_saldo_main';
+            $listJurnal = $this->jurnal->getJurnalByYearAndMonth();
+            $tahun = $this->jurnal->getJurnalByYear();
+            $this->load->view('template',compact('content','listJurnal','titleTag','tahun'));
+        }
 
     public function neracaSaldoDetail(){
         $content = 'user/neraca_saldo';
@@ -436,259 +446,324 @@ class User extends CI_Controller{
     }
 
     public function laporanKeuangan(){
-        $titleTag = 'Laporan Keuangan';
-        $content = 'user/laporan_keuangan';
-        $this->load->view('template',compact('content','titleTag'));
+        if($this->session->userdata('role') != 'direktur') {
+            show_404();
+        }else {
+            $titleTag = 'Laporan Keuangan';
+            $content = 'user/laporan_keuangan';
+            $this->load->view('template',compact('content','titleTag'));
+        }
     }
 
     public function laporanKeuanganLabaRugi() {
-        $titleTag = 'Laporan Keuangan';
-        $content = 'user/laporan_keuangan_laba_rugi_main';
-        $listJurnal = $this->jurnal->getJurnalByYearAndMonth();
-        $tahun = $this->jurnal->getJurnalByYear();
-        $this->load->view('template',compact('content','listJurnal','titleTag','tahun'));
+        if($this->session->userdata('role') != 'direktur') {
+            show_404();
+        }else {
+            $titleTag = 'Laporan Keuangan';
+            $content = 'user/laporan_keuangan_laba_rugi_main';
+            $listJurnal = $this->jurnal->getJurnalByYearAndMonth();
+            $tahun = $this->jurnal->getJurnalByYear();
+            $this->load->view('template',compact('content','listJurnal','titleTag','tahun'));
+        }
     }
 
     public function laporanKeuanganLabaRugiDetail(){
-        $content = 'user/laporan_keuangan_laba_rugi';
-        $titleTag = 'Laporan Keuangan';
+        if($this->session->userdata('role') != 'direktur') {
+            show_404();
+        }else {
+            $content = 'user/laporan_keuangan_laba_rugi';
+            $titleTag = 'Laporan Keuangan';
 
-        $bulan = $this->input->post('bulan',true);
-        $tahun = $this->input->post('tahun',true);
+            $bulan = $this->input->post('bulan',true);
+            $tahun = $this->input->post('tahun',true);
 
-        if(empty($bulan) || empty($tahun)){
-            redirect('laporan_keuangan/labaRugi');
+            if(empty($bulan) || empty($tahun)){
+                redirect('laporan_keuangan/labaRugi');
+            }
+
+            $dataAkunP = $this->akun->getAkunByMonthYearP($bulan,$tahun);
+            $dataAkunB = $this->akun->getAkunByMonthYearB($bulan,$tahun);
+            $dataP = null;
+            $dataB = null;
+            $saldoP = null;
+            $hasil = null;
+            $totalP = null;
+            $totalB = null;
+            $s = null;
+            
+            foreach($dataAkunP as $row){
+                $dataP[] = (array) $this->jurnal->getJurnalByNoReffMonthYearP($row->no_reff,$bulan,$tahun);
+                $saldoP[] = (array) $this->jurnal->getJurnalByNoReffSaldoMonthYearP($row->no_reff,$bulan,$tahun);
+            }
+
+            foreach($dataAkunB as $row){
+                $dataB[] = (array) $this->jurnal->getJurnalByNoReffMonthYearB($row->no_reff,$bulan,$tahun);
+                $saldoB[] = (array) $this->jurnal->getJurnalByNoReffSaldoMonthYearB($row->no_reff,$bulan,$tahun);
+            }
+
+            if($dataP == null || $saldoP == null || $saldoB == null || $dataB == null){
+                $this->session->set_flashdata('dataNull','Laporan Keuangan Laba / Rugi Dengan Bulan '.bulan($bulan).' Pada Tahun '.$tahun.' Tidak Di Temukan');
+                redirect('laporan_keuangan/labaRugi');
+            }
+
+            $jumlahP = count($dataP);
+            $jumlahB = count($dataB);
+
+            $this->load->view('template',compact('content','titleTag','dataAkunP','dataAkunB','dataP','dataB','jumlahP','jumlahB','saldoP','saldoB','hasil', 'totalP', 'totalB', 's', 'bulan', 'tahun'));
         }
-
-        $dataAkunP = $this->akun->getAkunByMonthYearP($bulan,$tahun);
-        $dataAkunB = $this->akun->getAkunByMonthYearB($bulan,$tahun);
-        $dataP = null;
-        $dataB = null;
-        $saldoP = null;
-        $hasil = null;
-        $totalP = null;
-        $totalB = null;
-        $s = null;
-        
-        foreach($dataAkunP as $row){
-            $dataP[] = (array) $this->jurnal->getJurnalByNoReffMonthYearP($row->no_reff,$bulan,$tahun);
-            $saldoP[] = (array) $this->jurnal->getJurnalByNoReffSaldoMonthYearP($row->no_reff,$bulan,$tahun);
-        }
-
-        foreach($dataAkunB as $row){
-            $dataB[] = (array) $this->jurnal->getJurnalByNoReffMonthYearB($row->no_reff,$bulan,$tahun);
-            $saldoB[] = (array) $this->jurnal->getJurnalByNoReffSaldoMonthYearB($row->no_reff,$bulan,$tahun);
-        }
-
-        if($dataP == null || $saldoP == null || $saldoB == null || $dataB == null){
-            $this->session->set_flashdata('dataNull','Laporan Keuangan Laba / Rugi Dengan Bulan '.bulan($bulan).' Pada Tahun '.$tahun.' Tidak Di Temukan');
-            redirect('laporan_keuangan/labaRugi');
-        }
-
-        $jumlahP = count($dataP);
-        $jumlahB = count($dataB);
-
-        $this->load->view('template',compact('content','titleTag','dataAkunP','dataAkunB','dataP','dataB','jumlahP','jumlahB','saldoP','saldoB','hasil', 'totalP', 'totalB', 's', 'bulan', 'tahun'));
     }
 
     public function excelLaporanLabaRugi()
     {
-        $bulan = $this->input->post('bulan',true);
-        $tahun = $this->input->post('tahun',true);
+        if($this->session->userdata('role') != 'direktur') {
+            show_404();
+        }else {
+            $bulan = $this->input->post('bulan',true);
+            $tahun = $this->input->post('tahun',true);
 
-        $dataAkunP = $this->akun->getAkunByMonthYearP($bulan,$tahun);
-        $dataAkunB = $this->akun->getAkunByMonthYearB($bulan,$tahun);
+            $dataAkunP = $this->akun->getAkunByMonthYearP($bulan,$tahun);
+            $dataAkunB = $this->akun->getAkunByMonthYearB($bulan,$tahun);
 
-        foreach($dataAkunP as $row){
-            $dataP[] = (array) $this->jurnal->getJurnalByNoReffMonthYearP($row->no_reff,$bulan,$tahun);
-            $saldoP[] = (array) $this->jurnal->getJurnalByNoReffSaldoMonthYearP($row->no_reff,$bulan,$tahun);
-        }
-
-        foreach($dataAkunB as $row){
-            $dataB[] = (array) $this->jurnal->getJurnalByNoReffMonthYearB($row->no_reff,$bulan,$tahun);
-            $saldoB[] = (array) $this->jurnal->getJurnalByNoReffSaldoMonthYearB($row->no_reff,$bulan,$tahun);
-        }
-
-        $jumlahP = count($dataP);
-        $jumlahB = count($dataB);
-        
-        $spreadsheet = new Spreadsheet();
-        $spreadsheet->getDefaultStyle()->getFont()->setName('Times New Roman')->setSize(12);
-        $sheet = $spreadsheet->getActiveSheet();
-        $sheet->getColumnDimension('A')->setWidth(20);
-        $sheet->getColumnDimension('B')->setWidth(20);
-        $sheet->getColumnDimension('C')->setWidth(12);
-        $sheet->getColumnDimension('D')->setWidth(12);
-        // $sheet->getStyle('C:D')->getNumberFormat('Accounting');
-
-        $sheet->setCellValue('A1', 'Laporan Laba / Rugi Bulan '. bulan($bulan). ' Tahun '. $tahun);
-        $sheet->mergeCells('A1:D1');
-        $sheet->getStyle('A1')->getAlignment()->setHorizontal('center');
-        $sheet->getStyle('A1')->applyFromArray([
-            'font' => [
-                'bold' => true,
-                'size' => 16
-            ]
-        ]);
-
-        $sheet->setCellValue('A3', 'Pendapatan');
-        $sheet->getStyle('A3')->applyFromArray([
-            'font' => ['bold' => true]
-        ]);
-        $x = 4;
-        $totalP = 0;
-        $totalB = 0;
-        $debitP = 0;
-        $debitB = 0;
-        $kreditP = 0;
-        $kreditB = 0;
-        
-        for($i=0;$i<$jumlahP;$i++) { 
-            $s=0;
-            $deb = $saldoP[$i];
-            $sheet->setCellValue('A'.$x, $dataP[$i][$s]->nama_reff);
-            for($j=0;$j<count($dataP[$i]);$j++) {
-                $kreditP = $kreditP + $deb[$j]->saldo;
-                $hasilP = $kreditP-$debitP;
+            foreach($dataAkunP as $row){
+                $dataP[] = (array) $this->jurnal->getJurnalByNoReffMonthYearP($row->no_reff,$bulan,$tahun);
+                $saldoP[] = (array) $this->jurnal->getJurnalByNoReffSaldoMonthYearP($row->no_reff,$bulan,$tahun);
             }
-            $sheet->setCellValue('C'.$x, $hasilP);
-            $totalP += $hasilP;
+
+            foreach($dataAkunB as $row){
+                $dataB[] = (array) $this->jurnal->getJurnalByNoReffMonthYearB($row->no_reff,$bulan,$tahun);
+                $saldoB[] = (array) $this->jurnal->getJurnalByNoReffSaldoMonthYearB($row->no_reff,$bulan,$tahun);
+            }
+
+            $jumlahP = count($dataP);
+            $jumlahB = count($dataB);
+            
+            $spreadsheet = new Spreadsheet();
+            $spreadsheet->getDefaultStyle()->getFont()->setName('Times New Roman')->setSize(12);
+            $sheet = $spreadsheet->getActiveSheet();
+            $sheet->getColumnDimension('A')->setWidth(20);
+            $sheet->getColumnDimension('B')->setWidth(20);
+            $sheet->getColumnDimension('C')->setWidth(12);
+            $sheet->getColumnDimension('D')->setWidth(12);
+            // $sheet->getStyle('C:D')->getNumberFormat('Accounting');
+
+            $sheet->setCellValue('A1', 'PT. Mitra Sejati Konsultan');
+            $sheet->setCellValue('A2', 'Laporan Laba/Rugi');
+            $sheet->setCellValue('A3', 'Per '. bulan($bulan). " Tahun $tahun");
+            $sheet->mergeCells('A1:D1');
+            $sheet->mergeCells('A2:D2');
+            $sheet->mergeCells('A3:D3');
+            $sheet->getStyle('A1:D3')->getAlignment()->setHorizontal('center');
+            $sheet->getStyle('A1:D3')->applyFromArray([
+                'font' => [
+                    'bold' => true,
+                    'size' => 14
+                ]
+            ]);
+
+            $sheet->setCellValue('A5', 'Pendapatan');
+            $sheet->getStyle('A5')->applyFromArray([
+                'font' => ['bold' => true]
+            ]);
+            $x = 6;
+            $totalP = 0;
+            $totalB = 0;
             $debitP = 0;
-            $kreditP = 0;
-            $x++;
-        }
-
-        $sheet->getStyle("A$x:D$x")->applyFromArray([
-            'font' => ['bold' => true]
-        ]);
-        $sheet->setCellValue('B'.$x, 'Total Pendapatan');
-        $sheet->setCellValue('D'.$x, $totalP);
-
-        $x++;
-        $x++;
-        $sheet->setCellValue("A$x", 'Beban');
-        $sheet->getStyle("A$x")->applyFromArray([
-            'font' => ['bold' => true]
-        ]);        
-        $x++;
-
-        for($i=0;$i<$jumlahB;$i++) { 
-            $s=0;
-            $deb = $saldoB[$i];
-            $sheet->setCellValue('A'.$x, $dataB[$i][$s]->nama_reff);
-            for($j=0;$j<count($dataB[$i]);$j++) {
-                $kreditB = $kreditB + $deb[$j]->saldo;
-                $hasilB = $kreditB-$debitB;
-            }
-            $sheet->setCellValue('C'.$x, $hasilB);
-            $totalB += $hasilB;
             $debitB = 0;
+            $kreditP = 0;
             $kreditB = 0;
+            
+            for($i=0;$i<$jumlahP;$i++) { 
+                $s=0;
+                $deb = $saldoP[$i];
+                $sheet->setCellValue('A'.$x, $dataP[$i][$s]->nama_reff);
+                for($j=0;$j<count($dataP[$i]);$j++) {
+                    $kreditP = $kreditP + $deb[$j]->saldo;
+                    $hasilP = $kreditP-$debitP;
+                }
+                $sheet->setCellValue('C'.$x, $hasilP);
+                $totalP += $hasilP;
+                $debitP = 0;
+                $kreditP = 0;
+                $x++;
+            }
+            $x--;
+
+            $sheet->getStyle('C'. $x)->applyFromArray([
+                'borders' => [
+                    'bottom' => [
+                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
+                        'color' => ['argb' => '00000000'],
+                    ],
+                ],
+            ]);
+
             $x++;
-        }
 
-        $sheet->getStyle("A$x:D$x")->applyFromArray([
-            'font' => ['bold' => true]
-        ]);
-        $sheet->setCellValue('B'.$x, 'Total Beban');
-        $sheet->setCellValue('D'.$x, $totalB);
-        $x++;
-        $sheet->getStyle("A$x:D$x")->applyFromArray([
-            'font' => ['bold' => true]
-        ]);
-        $sheet->setCellValue('B'.$x, ($totalP - $totalB < 0) ? 'Beban' : 'Laba Bersih');
-        $sheet->setCellValue('D'.$x, $totalP - $totalB);
-        $x++;
-        $x++;
-        $sheet->setCellValue('A'.$x, 'PT. Mitra Sejati Konsultan');
-        $sheet->mergeCells("A$x:D$x");
-        $sheet->getStyle('A'.$x)->getAlignment()->setHorizontal('center');
-        $sheet->getStyle('A'.$x)->applyFromArray([
-            'font' => [
-                // 'bold' => true,
-                'size' => 13
-            ]
-        ]);
+            $sheet->getStyle("A$x:D$x")->applyFromArray([
+                'font' => ['bold' => true]
+            ]);
+            $sheet->setCellValue('B'.$x, 'Total Pendapatan');
+            $sheet->setCellValue('D'.$x, $totalP);
+            $sheet->getStyle('D'. $x)->applyFromArray([
+                'borders' => [
+                    'bottom' => [
+                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
+                        'color' => ['argb' => '00000000'],
+                    ],
+                ],
+            ]);
+            $x++;
+            $x++;
+            $sheet->setCellValue("A$x", 'Beban');
+            $sheet->getStyle("A$x")->applyFromArray([
+                'font' => ['bold' => true]
+            ]);        
+            $x++;
 
-        $writer = new Xlsx($spreadsheet);
-        $filename = 'Laporan Laba / Rugi '.bulan($bulan).' '.$tahun;
+            for($i=0;$i<$jumlahB;$i++) { 
+                $s=0;
+                $deb = $saldoB[$i];
+                $sheet->setCellValue('A'.$x, $dataB[$i][$s]->nama_reff);
+                for($j=0;$j<count($dataB[$i]);$j++) {
+                    $kreditB = $kreditB + $deb[$j]->saldo;
+                    $hasilB = $kreditB-$debitB;
+                }
+                $sheet->setCellValue('C'.$x, $hasilB);
+                $totalB += $hasilB;
+                $debitB = 0;
+                $kreditB = 0;
+                $x++;
+            }
+
+            $x--;
+
+            $sheet->getStyle('C'. $x)->applyFromArray([
+                'borders' => [
+                    'bottom' => [
+                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
+                        'color' => ['argb' => '00000000'],
+                    ],
+                ],
+            ]);
+
+            $x++;
+
+            $sheet->getStyle("A$x:D$x")->applyFromArray([
+                'font' => ['bold' => true]
+            ]);
+            $sheet->setCellValue('B'.$x, 'Total Beban');
+            $sheet->setCellValue('D'.$x, $totalB);
+            $sheet->getStyle('D'. $x)->applyFromArray([
+                'borders' => [
+                    'bottom' => [
+                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
+                        'color' => ['argb' => '00000000'],
+                    ],
+                ],
+            ]);
+            $x++;
+            $sheet->getStyle("A$x:D$x")->applyFromArray([
+                'font' => ['bold' => true]
+            ]);
+            $sheet->setCellValue('B'.$x, ($totalP - $totalB < 0) ? 'Beban' : 'Laba Bersih');
+            $sheet->setCellValue('D'.$x, $totalP - $totalB);
+            $sheet->getStyle("A5:D$x")->applyFromArray([
+                'borders' => [
+                    'outline' => [
+                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
+                        'color' => ['argb' => '00000000'],
+                    ],
+                ],
+            ]);
+
+            $writer = new Xlsx($spreadsheet);
+            $filename = 'Laporan Laba / Rugi '.bulan($bulan).' '.$tahun;
+            
+            header('Content-Type: application/vnd.ms-excel');
+            header('Content-Disposition: attachment;filename="'. $filename .'.xlsx"'); 
+            header('Cache-Control: max-age=0');
         
-        header('Content-Type: application/vnd.ms-excel');
-        header('Content-Disposition: attachment;filename="'. $filename .'.xlsx"'); 
-        header('Cache-Control: max-age=0');
-    
-        $writer->save('php://output');
+            $writer->save('php://output');
+        }
     }
 
     public function laporanKeuanganPerubahanModal() {
-        $titleTag = 'Laporan Keuangan';
-        $content = 'user/laporan_keuangan_perubahan_modal_main';
-        $listJurnal = $this->jurnal->getJurnalByYearAndMonth();
-        $tahun = $this->jurnal->getJurnalByYear();
-        $this->load->view('template',compact('content','listJurnal','titleTag','tahun'));
+        if($this->session->userdata('role') != 'direktur') {
+            show_404();
+        }else {
+            $titleTag = 'Laporan Keuangan';
+            $content = 'user/laporan_keuangan_perubahan_modal_main';
+            $listJurnal = $this->jurnal->getJurnalByYearAndMonth();
+            $tahun = $this->jurnal->getJurnalByYear();
+            $this->load->view('template',compact('content','listJurnal','titleTag','tahun'));
+        }
     }
 
     public function laporanKeuanganPerubahanModalDetail() {
-        $content = 'user/laporan_keuangan_perubahan_modal';
-        $titleTag = 'Laporan Keuangan';
+        if($this->session->userdata('role') != 'direktur') {
+            show_404();
+        }else {
+            $content = 'user/laporan_keuangan_perubahan_modal';
+            $titleTag = 'Laporan Keuangan';
 
-        $bulan = $this->input->post('bulan',true);
-        $tahun = $this->input->post('tahun',true);
+            $bulan = $this->input->post('bulan',true);
+            $tahun = $this->input->post('tahun',true);
 
-        if(empty($bulan) || empty($tahun)){
-            redirect('laporan_keuangan/perubahanModal');
+            if(empty($bulan) || empty($tahun)){
+                redirect('laporan_keuangan/perubahanModal');
+            }
+
+            $dataAkunM = $this->akun->getAkunByMonthYearM($bulan,$tahun);
+            $dataAkunP = $this->akun->getAkunByMonthYearP($bulan,$tahun);
+            $dataAkunPr = $this->akun->getAkunByMonthYearPr($bulan,$tahun);
+            $dataAkunB = $this->akun->getAkunByMonthYearB($bulan,$tahun);
+            $dataM = null;
+            $dataP = null;
+            $dataPr = null;
+            $dataB = null;
+            $saldoM = null;
+            $saldoP = null;
+            $saldoPr = null;
+            $saldoB = null;
+            $hasil = null;
+            $totalM = null;
+            $totalP = null;
+            $totalPr = null;
+            $totalB = null;
+            $s = null;
+            
+            foreach($dataAkunM as $row){
+                $dataM[] = (array) $this->jurnal->getJurnalByNoReffMonthYearM($row->no_reff,$bulan,$tahun);
+                $saldoM[] = (array) $this->jurnal->getJurnalByNoReffSaldoMonthYearM($row->no_reff,$bulan,$tahun);
+            }
+
+            foreach($dataAkunP as $row){
+                $dataP[] = (array) $this->jurnal->getJurnalByNoReffMonthYearP($row->no_reff,$bulan,$tahun);
+                $saldoP[] = (array) $this->jurnal->getJurnalByNoReffSaldoMonthYearP($row->no_reff,$bulan,$tahun);
+            }
+
+            foreach($dataAkunPr as $row){
+                $dataPr[] = (array) $this->jurnal->getJurnalByNoReffMonthYearPr($row->no_reff,$bulan,$tahun);
+                $saldoPr[] = (array) $this->jurnal->getJurnalByNoReffSaldoMonthYearPr($row->no_reff,$bulan,$tahun);
+            }
+
+            foreach($dataAkunB as $row){
+                $dataB[] = (array) $this->jurnal->getJurnalByNoReffMonthYearB($row->no_reff,$bulan,$tahun);
+                $saldoB[] = (array) $this->jurnal->getJurnalByNoReffSaldoMonthYearB($row->no_reff,$bulan,$tahun);
+            }
+
+            if($dataP == null || $saldoP == null ||$dataPr == null || $saldoPr == null || $saldoB == null || $dataB == null || $saldoM == null || $dataM == null){
+                $this->session->set_flashdata('dataNull','Laporan Perubahan Modal Dengan Bulan '.bulan($bulan).' Pada Tahun '.$tahun.' Tidak Di Temukan');
+                redirect('laporan_keuangan/perubahanModal');
+            }
+
+            $jumlahM = count($dataM);
+            $jumlahP = count($dataP);
+            $jumlahPr = count($dataPr);
+            $jumlahB = count($dataB);
+
+            $this->load->view('template',compact('content','titleTag', 'dataAkunM' ,'dataAkunP', 'dataAkunPr' ,'dataAkunB', 'dataM' ,'dataP', 'dataPr' ,'dataB', 'jumlahM' ,'jumlahP', 'jumlahPr' ,'jumlahB', 'saldoM' ,'saldoP', 'saldoPr' ,'saldoB','hasil', 'totalM' , 'totalP', 'totalPr' , 'totalB', 's', 'bulan', 'tahun'));
         }
-
-        $dataAkunM = $this->akun->getAkunByMonthYearM($bulan,$tahun);
-        $dataAkunP = $this->akun->getAkunByMonthYearP($bulan,$tahun);
-        $dataAkunPr = $this->akun->getAkunByMonthYearPr($bulan,$tahun);
-        $dataAkunB = $this->akun->getAkunByMonthYearB($bulan,$tahun);
-        $dataM = null;
-        $dataP = null;
-        $dataPr = null;
-        $dataB = null;
-        $saldoM = null;
-        $saldoP = null;
-        $saldoPr = null;
-        $saldoB = null;
-        $hasil = null;
-        $totalM = null;
-        $totalP = null;
-        $totalPr = null;
-        $totalB = null;
-        $s = null;
-        
-        foreach($dataAkunM as $row){
-            $dataM[] = (array) $this->jurnal->getJurnalByNoReffMonthYearM($row->no_reff,$bulan,$tahun);
-            $saldoM[] = (array) $this->jurnal->getJurnalByNoReffSaldoMonthYearM($row->no_reff,$bulan,$tahun);
-        }
-
-        foreach($dataAkunP as $row){
-            $dataP[] = (array) $this->jurnal->getJurnalByNoReffMonthYearP($row->no_reff,$bulan,$tahun);
-            $saldoP[] = (array) $this->jurnal->getJurnalByNoReffSaldoMonthYearP($row->no_reff,$bulan,$tahun);
-        }
-
-        foreach($dataAkunPr as $row){
-            $dataPr[] = (array) $this->jurnal->getJurnalByNoReffMonthYearPr($row->no_reff,$bulan,$tahun);
-            $saldoPr[] = (array) $this->jurnal->getJurnalByNoReffSaldoMonthYearPr($row->no_reff,$bulan,$tahun);
-        }
-
-        foreach($dataAkunB as $row){
-            $dataB[] = (array) $this->jurnal->getJurnalByNoReffMonthYearB($row->no_reff,$bulan,$tahun);
-            $saldoB[] = (array) $this->jurnal->getJurnalByNoReffSaldoMonthYearB($row->no_reff,$bulan,$tahun);
-        }
-
-        if($dataP == null || $saldoP == null ||$dataPr == null || $saldoPr == null || $saldoB == null || $dataB == null || $saldoM == null || $dataM == null){
-            $this->session->set_flashdata('dataNull','Laporan Perubahan Modal Dengan Bulan '.bulan($bulan).' Pada Tahun '.$tahun.' Tidak Di Temukan');
-            redirect('laporan_keuangan/perubahanModal');
-        }
-
-        $jumlahM = count($dataM);
-        $jumlahP = count($dataP);
-        $jumlahPr = count($dataPr);
-        $jumlahB = count($dataB);
-
-        $this->load->view('template',compact('content','titleTag', 'dataAkunM' ,'dataAkunP', 'dataAkunPr' ,'dataAkunB', 'dataM' ,'dataP', 'dataPr' ,'dataB', 'jumlahM' ,'jumlahP', 'jumlahPr' ,'jumlahB', 'saldoM' ,'saldoP', 'saldoPr' ,'saldoB','hasil', 'totalM' , 'totalP', 'totalPr' , 'totalB', 's', 'bulan', 'tahun'));
     }
 
         
@@ -779,11 +854,15 @@ class User extends CI_Controller{
     }
 
     public function laporanKeuanganNeraca() {
-        $titleTag = 'Laporan Keuangan';
-        $content = 'user/laporan_keuangan_neraca_main';
-        $listJurnal = $this->jurnal->getJurnalByYearAndMonth();
-        $tahun = $this->jurnal->getJurnalByYear();
-        $this->load->view('template',compact('content','listJurnal','titleTag','tahun'));
+        if($this->session->userdata('role') != 'direktur') {
+            show_404();
+        }else {
+            $titleTag = 'Laporan Keuangan';
+            $content = 'user/laporan_keuangan_neraca_main';
+            $listJurnal = $this->jurnal->getJurnalByYearAndMonth();
+            $tahun = $this->jurnal->getJurnalByYear();
+            $this->load->view('template',compact('content','listJurnal','titleTag','tahun'));
+        }
     }
 
     public function laporanKeuanganNeracaDetail() {
@@ -849,12 +928,105 @@ class User extends CI_Controller{
         $this->load->view('template',compact('content','titleTag','dataAkunA', 'dataAkunAt', 'dataAkunU', 'dataAkunMp' ,'dataA', 'dataAt', 'dataU', 'dataMp' ,'jumlahA', 'jumlahAt', 'jumlahU', 'jumlahMp' ,'saldoA', 'saldoAt', 'saldoU', 'saldoMp' ,'hasil', 'totalA', 'totalAt', 'totalU', 'totalMp' , 's', 'bulan', 'tahun'));
     }
 
+    public function excelLaporanNeraca()
+    {
+        $bulan = $this->input->post('bulan',true);
+        $tahun = $this->input->post('tahun',true);
+
+        if(empty($bulan) || empty($tahun)){
+            redirect('laporan_keuangan/neraca');
+        }
+
+        $dataAkunA = $this->akun->getAkunByMonthYearA($bulan,$tahun);
+        $dataAkunAt = $this->akun->getAkunByMonthYearAt($bulan,$tahun);
+        $dataAkunU = $this->akun->getAkunByMonthYearU($bulan,$tahun);
+        $dataAkunMp = $this->akun->getAkunByMonthYearMp($bulan,$tahun);
+        $dataA = null;
+        $dataAt = null;
+        $dataU = null;
+        $dataMp = null;
+        $saldoA = null;
+        $saldoAt = null;
+        $saldoU = null;
+        $saldoMp = null;
+        $hasil = null;
+        $totalA = null;
+        $totalAt = null;
+        $totalU = null;
+        $totalMp = null;
+        $s = null;
+        
+        foreach($dataAkunA as $row){
+            $dataA[] = (array) $this->jurnal->getJurnalByNoReffMonthYearA($row->no_reff,$bulan,$tahun);
+            $saldoA[] = (array) $this->jurnal->getJurnalByNoReffSaldoMonthYearA($row->no_reff,$bulan,$tahun);
+        }
+
+        foreach($dataAkunAt as $row){
+            $dataAt[] = (array) $this->jurnal->getJurnalByNoReffMonthYearAt($row->no_reff,$bulan,$tahun);
+            $saldoAt[] = (array) $this->jurnal->getJurnalByNoReffSaldoMonthYearAt($row->no_reff,$bulan,$tahun);
+        }
+
+        foreach($dataAkunU as $row){
+            $dataU[] = (array) $this->jurnal->getJurnalByNoReffMonthYearU($row->no_reff,$bulan,$tahun);
+            $saldoU[] = (array) $this->jurnal->getJurnalByNoReffSaldoMonthYearU($row->no_reff,$bulan,$tahun);
+        }
+
+        foreach($dataAkunMp as $row){
+            $dataMp[] = (array) $this->jurnal->getJurnalByNoReffMonthYearMp($row->no_reff,$bulan,$tahun);
+            $saldoMp[] = (array) $this->jurnal->getJurnalByNoReffSaldoMonthYearMp($row->no_reff,$bulan,$tahun);
+        }
+
+        $jumlahA = count($dataA);
+        $jumlahAt = count($dataAt);
+        $jumlahU = count($dataU);
+        $jumlahMp = count($dataMp);
+
+        $spreadsheet = new Spreadsheet();
+        $spreadsheet->getDefaultStyle()->getFont()->setName('Times New Roman')->setSize(12);
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->getColumnDimension('A')->setWidth(20);
+        $sheet->getColumnDimension('B')->setWidth(12);
+        $sheet->getColumnDimension('C')->setWidth(12);
+
+        $sheet->setCellValue('A1', 'PT. Mitra Sejati Konsultan');
+        $sheet->setCellValue('A2', 'Laporan Neraca');
+        $sheet->setCellValue('A3', 'Per '. bulan($bulan). " Tahun $tahun");
+        $sheet->mergeCells('A1:D1');
+        $sheet->mergeCells('A2:D2');
+        $sheet->mergeCells('A3:D3');
+        $sheet->getStyle('A1:D3')->getAlignment()->setHorizontal('center');
+        $sheet->getStyle('A1:D3')->applyFromArray([
+            'font' => [
+                'bold' => true,
+                'size' => 14
+            ]
+        ]);
+
+        $sheet->setCellValue('A5', 'Pendapatan');
+        $sheet->getStyle('A5')->applyFromArray([
+            'font' => ['bold' => true]
+        ]);
+
+        $writer = new Xlsx($spreadsheet);
+        $filename = 'Laporan Neraca '.bulan($bulan).' '.$tahun;
+        
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename="'. $filename .'.xlsx"'); 
+        header('Cache-Control: max-age=0');
+    
+        $writer->save('php://output');
+    }
+
     public function laporanKeuanganArusKas() {
-        $titleTag = 'Laporan Keuangan';
-        $content = 'user/laporan_keuangan_arus_kas_main';
-        $listJurnal = $this->jurnal->getJurnalByYearAndMonth();
-        $tahun = $this->jurnal->getJurnalByYear();
-        $this->load->view('template',compact('content','listJurnal','titleTag','tahun'));
+        if($this->session->userdata('role') != 'direktur') {
+            show_404();
+        }else {
+            $titleTag = 'Laporan Keuangan';
+            $content = 'user/laporan_keuangan_arus_kas_main';
+            $listJurnal = $this->jurnal->getJurnalByYearAndMonth();
+            $tahun = $this->jurnal->getJurnalByYear();
+            $this->load->view('template',compact('content','listJurnal','titleTag','tahun'));
+        }
     }
 
     public function laporanKeuanganArusKasDetail() {
@@ -894,9 +1066,6 @@ class User extends CI_Controller{
         $jurnals = $this->jurnal->getJurnalJoinAkunDetailFilter($bulan,$tahun);
         $totalKredit = $this->jurnal->getTotalSaldoDetailFilter('kredit',$bulan,$tahun);
         $totalDebit = $this->jurnal->getTotalSaldoDetailFilter('debit',$bulan,$tahun);
-        // $labaRugi = null;
-        // var_dump(count($jurnals));
-        // die;
         $jumlah = count($jurnals);
 
         if($jurnals==null){
@@ -935,8 +1104,7 @@ class User extends CI_Controller{
 
         // $jumlahP = count($dataP);
         
-        for($i=0;$i<$jumlah;$i++) { 
-            var_dump($i);
+        for($i=0;$i<$jumlah;$i++) {
             // $s=0;
             // $deb = $saldoB[$i];
             // $sheet->setCellValue('A'.$x, $dataB[$i][$s]->nama_reff);
@@ -950,7 +1118,6 @@ class User extends CI_Controller{
             // $kreditB = 0;
             // $x++;
         }
-        die;
 
 
         $writer = new Xlsx($spreadsheet);
